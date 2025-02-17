@@ -1,1 +1,14 @@
 @import "tailwindcss";
+
+/* index.css ou global.css */
+html {
+  scroll-behavior: smooth;
+}
+
+@theme {
+  --font-montserrat: "Montserrat", serif;
+}
+
+* {
+  font-family: "Montserrat", serif;
+}

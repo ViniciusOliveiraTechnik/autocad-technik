@@ -1,50 +1,33 @@
-import ImageContainer from "./components/ImageContainer";
-import autocad2016 from "./assets/autocad-bg.png";
-import "./App.css";
-import { useState } from "react";
-import LoadingScreen from "./components/LoadingScreen";
-import Form from "./components/Form";
+import MainForm from "./components/MainForm";
+import Container from "./components/UI/Container/Container";
+import Header from "./components/UI/Header/Header";
+import Table from "./components/UI/Table/Table";
 
 function App() {
-  const [loading, setLoading] = useState(false);
-
-  const handleApiLoading = async () => {
-    setLoading(true);
-
-    try {
-      const response = await fetch(
-        "https://jsonplaceholder.typicode.com/todos/1",
-        {
-          method: "GET",
-        }
-      );
-
-      const data = await response.json();
-      console.log(data);
-    } catch (error) {
-      console.error("Erro ao fazer a requisição:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
-    <div className="h-screen w-full flex items-center justify-center">
-      {loading ? (
-        <LoadingScreen />
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-1 xl:grid-cols-2 h-screen w-full xl:h-[90%] xl:w-[90%] shadow-container">
-          {/* Contêiner da imagem */}
-          <div className="rounded-l-[10px] hidden md:hidden xl:block bg-white">
-            <ImageContainer imageUrl={autocad2016} imageAlt={"AutoCAD"} />
-          </div>
+    <div className="flex flex-col scroll-smooth">
+      <header>
+        <Header
+          sections={[
+            { title: "Extração", link: "#extract" },
+            { title: "Modificação", link: "#modify" },
+          ]}
+        />
+      </header>
 
-          {/* Formulário */}
-          <div className="bg-gray-200 flex justify-center items-center rounded-r-[10px]">
-            <Form handleApiLoading={handleApiLoading} />
-          </div>
-        </div>
-      )}
+      <section
+        id="extract"
+        className="bg-gray-300 h-screen w-full flex items-center justify-center"
+      >
+        <MainForm />
+      </section>
+
+      <section
+        id="modify"
+        className="h-screen flex items-center justify-center bg-gray-500"
+      >
+        <Table />
+      </section>
     </div>
   );
 }
