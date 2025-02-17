@@ -1,5 +1,6 @@
 import { Menu } from "lucide-react";
 import { useState } from "react";
+import logo from "../../../assets/technik-logo.png"
 
 function Header({ sections }) {
   const [isOpenMenu, setIsOpenMenu] = useState(false);
@@ -11,7 +12,7 @@ function Header({ sections }) {
   return (
     <div className="bg-white text-red-500 font-semibold text-[16px] md:text-[18px] flex items-center justify-between h-16 w-full md:h-18 px-3 md:px-5 fixed top-0 left-0 z-50 shadow-sm">
       <img
-        src="/frontend/src/assets/technik-logo.png"
+        src={logo}
         alt="Logo Technik"
         className="w-[180px]"
       />
