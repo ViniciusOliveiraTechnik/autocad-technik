@@ -11,7 +11,7 @@ function Header({ sections }) {
   return (
     <div className="bg-white text-red-500 font-semibold text-[16px] md:text-[18px] flex items-center justify-between h-16 w-full md:h-18 px-3 md:px-5 fixed top-0 left-0 z-50 shadow-sm">
       <img
-        src="/src/assets/technik-logo.png"
+        src="/frontend/src/assets/technik-logo.png"
         alt="Logo Technik"
         className="w-[180px]"
       />
