@@ -56,16 +56,12 @@ function MainForm() {
             value={filename}
           />
 
-          {error && <p className="text-red-600">{error}</p> }
+          {error && <p className="text-red-600">{error}</p>}
         </Container>
 
         <FormSubmitContainer>
           <Button
-            textColor={"text-red-500"}
-            bgColor={"bg-white"}
-            border={"border-1 border-red-500"}
-            rounded={"rounded-[8px]"}
-            shadow
+            extraStyles="border border-red-600 text-red-600 shadow-md"
             onClick={handleCancel}
           >
             Cancelar
