@@ -1,6 +1,6 @@
 import { Menu } from "lucide-react";
 import { useState } from "react";
-import logo from "../../../assets/technik-logo.png"
+import logo from "../../../assets/technik-logo.png";
 
 function Header({ sections }) {
   const [isOpenMenu, setIsOpenMenu] = useState(false);

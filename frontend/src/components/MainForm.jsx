@@ -10,10 +10,28 @@ import FormSubmitContainer from "./UI/Container/FormSubmitContainer";
 import SubmitButton from "./UI/Button/SubmitButton";
 
 function MainForm() {
-  const [selectedFile, setSelectedFile] = useState();
+  const [filename, setFilename] = useState("");
+  const [file, setFile] = useState();
+  const [error, setError] = useState("");
 
   const handleSelectedFile = (e) => {
-    setSelectedFile(e.target.files[0].name);
+    setFilename(e.target.files[0].name);
+    setFile(e.target.files[0]);
+  };
+
+  const handleCancel = () => {
+    setFile(null);
+    setFilename("");
+    setError("");
+  };
+
+  const handleUpload = () => {
+    if (!file) {
+      setError("Selecione um arquivo");
+      return;
+    }
+
+    console.log(file);
   };
 
   return (
@@ -35,8 +53,10 @@ function MainForm() {
           <Input
             placeholder="Arquivo selecionado"
             type="text"
-            value={selectedFile}
+            value={filename}
           />
+
+          {error && <p className="text-red-600">{error}</p> }
         </Container>
 
         <FormSubmitContainer>
@@ -46,11 +66,12 @@ function MainForm() {
             border={"border-1 border-red-500"}
             rounded={"rounded-[8px]"}
             shadow
+            onClick={handleCancel}
           >
             Cancelar
           </Button>
 
-          <SubmitButton>Extrair</SubmitButton>
+          <SubmitButton onClick={handleUpload}>Extrair</SubmitButton>
         </FormSubmitContainer>
       </Form>
     </Container>

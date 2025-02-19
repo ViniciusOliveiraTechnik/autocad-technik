@@ -8,6 +8,7 @@ function Button({
   full,
   shadow,
   extraStyles = "",
+  onClick,
 }) {
   return (
     <button
@@ -22,6 +23,7 @@ function Button({
         px-4 py-2 font-semibold transition hover:opacity-[85%] cursor-pointer h-12 md:h-15
         ${extraStyles}
       `}
+      onClick={onClick}
     >
       {children}
     </button>
