@@ -38,7 +38,7 @@ function Header({ sections }) {
       <ul
         className={`${
           isOpenMenu ? "top-16" : "top-[200px] opacity-0"
-        } md:hidden bg-red-800 text-white absolute left-0 w-full p-4`}
+        } md:hidden bg-neutral-200 text-red-600 absolute left-0 w-full p-4 shadow`}
       >
         {sections.map((section, index) => (
           <li key={index} className="py-2 hover:text-gray-300">

@@ -2,74 +2,98 @@ import FileUploadButton from "./UI/Button/FileUploadButton";
 import Container from "./UI/Container/Container";
 import Title from "./UI/Title/Title";
 import Subtitle from "./UI/Title/Subtitle";
-import Form from "./UI/Form/Form";
 import Input from "./UI/Input/Input";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Button from "./UI/Button/Button";
-import FormSubmitContainer from "./UI/Container/FormSubmitContainer";
 import SubmitButton from "./UI/Button/SubmitButton";
+import { UploadDwgFile } from "../api/UploadDwgFile";
+import { UploadCloud } from "lucide-react";
 
 function MainForm() {
+  const fileInputRef = useRef(null);
+
+  const [errors, setErrors] = useState(null);
+  const [tags, setTags] = useState([]);
+  const [file, setFile] = useState(null);
   const [filename, setFilename] = useState("");
-  const [file, setFile] = useState();
-  const [error, setError] = useState("");
+  const [isExtracting, setIsExtracting] = useState(false);
 
-  const handleSelectedFile = (e) => {
-    setFilename(e.target.files[0].name);
-    setFile(e.target.files[0]);
+  const handleFileUploadClick = () => {
+    fileInputRef.current.click();
   };
 
-  const handleCancel = () => {
-    setFile(null);
-    setFilename("");
-    setError("");
-  };
-
-  const handleUpload = () => {
-    if (!file) {
-      setError("Selecione um arquivo");
+  const handleFile = (event) => {
+    if (!event.target.files) {
       return;
     }
 
-    console.log(file);
+    const selectedFile = event.target.files[0];
+    setFile(selectedFile);
+    setFilename(selectedFile.name);
+  };
+
+  const handleExtract = async () => {
+    if (!file) {
+      alert("Por favor, selecione um arquivo primeiro.");
+      return;
+    }
+
+    setIsExtracting(true);
+    setErrors(null)
+    setTags([])
+
+    const response = await UploadDwgFile(file);
+
+    if (!response.data) {
+      setErrors(response.error);
+    } else {
+      setTags(response.data);
+    }
+
+    setIsExtracting(false);
   };
 
   return (
     <Container
-      flex
-      padding="p-6"
-      rounded
       shadow
-      extraStyles="w-[90%] h-[60%] md:w-[60%] md:h-[65%]"
+      rounded
+      extraStyles="bg-white w-[90%] md:w-[80%] h-[50%] p-[25px] flex flex-col gap-3"
     >
       <Container>
-        <Title>Extração de TAGs</Title>
+        <Title>Extração de Tags</Title>
         <Subtitle>Selecione um arquivo para extrair</Subtitle>
       </Container>
 
-      <Form extraStyles="h-full justify-between py-4">
-        <Container flex justifyCenter>
-          <FileUploadButton onChange={handleSelectedFile} />
-          <Input
-            placeholder="Arquivo selecionado"
-            type="text"
-            value={filename}
+      <Container extraStyles="w-full h-full flex flex-col justify-between gap-4 text-[16px] md:text-[18px]">
+        <Container extraStyles="flex flex-col gap-3">
+          <Button
+            extraStyles="bg-red-200 flex flex-row items-center justify-center gap-3 bg-gradient-to-r from-red-800 to-red-500 text-white w-full"
+            onClick={handleFileUploadClick}
+          >
+            <UploadCloud />
+            Selecionar arquivo
+          </Button>
+          <input
+            type="file"
+            ref={fileInputRef}
+            className="hidden"
+            onChange={handleFile}
           />
-
-          {error && <p className="text-red-600">{error}</p>}
+          <Input placeholder="Arquivo selecionado" readOnly value={filename} />
+          {errors && <p>{errors}</p>}
         </Container>
 
-        <FormSubmitContainer>
+        <Container extraStyles="flex gap-3">
           <Button
-            extraStyles="border border-red-600 text-red-600 shadow-md"
-            onClick={handleCancel}
+            extraStyles="bg-red-200 flex flex-row items-center justify-center gap-3 bg-gradient-to-r from-red-800 to-red-500 text-white w-full"
+            onClick={handleExtract}
+            disabled={isExtracting}
           >
-            Cancelar
+            {isExtracting ? <p className="animate-spin"></p> : <p className="animate-spin"></p>}
           </Button>
-
-          <SubmitButton onClick={handleUpload}>Extrair</SubmitButton>
-        </FormSubmitContainer>
-      </Form>
+          
+        </Container>
+      </Container>
     </Container>
   );
 }

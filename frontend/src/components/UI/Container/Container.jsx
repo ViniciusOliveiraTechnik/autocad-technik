@@ -1,26 +1,9 @@
-function Container({
-  children,
-  itemsCenter,
-  justifyCenter,
-  flex,
-  shadow,
-  bgColor,
-  rounded,
-  padding,
-  extraStyles = "",
-}) {
+function Container({ children, shadow, rounded, extraStyles = "" }) {
   return (
     <div
-      className={`
-        ${rounded ? "rounded-[8px]" : ""}
-        ${flex ? "flex flex-col gap-3" : ""}
-        ${itemsCenter ? "items-center" : ""}
-        ${justifyCenter ? "justify-center" : ""}
-        ${bgColor || "bg-white"}
-        ${shadow ? "shadow-lg" : "shadow-none"}
-        ${padding || ""}
-        ${extraStyles}
-      `}
+      className={`${extraStyles} ${shadow ? "shadow-md" : ""} ${
+        rounded ? "rounded-[8px]" : ""
+      }`}
     >
       {children}
     </div>

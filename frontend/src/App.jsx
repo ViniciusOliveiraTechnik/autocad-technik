@@ -1,4 +1,5 @@
 import MainForm from "./components/MainForm";
+import Side from "./components/Teste";
 import Container from "./components/UI/Container/Container";
 import Header from "./components/UI/Header/Header";
 import Table from "./components/UI/Table/Table";
@@ -27,6 +28,10 @@ function App() {
         className="h-screen flex items-center justify-center bg-gray-500"
       >
         <Table />
+      </section>
+
+      <section>
+        <Side />
       </section>
     </div>
   );

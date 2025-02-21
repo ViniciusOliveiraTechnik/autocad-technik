@@ -16,6 +16,7 @@ function FileUploadButton({ onChange }) {
         type="file"
         name="upload-file"
         id="upload-file"
+        accept=".dwg"
       />
     </>
   );
