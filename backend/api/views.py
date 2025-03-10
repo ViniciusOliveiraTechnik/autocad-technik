@@ -42,7 +42,7 @@ def recieve_file(request):
         file = File.objects.create(file_name=temp_file_name, file_path=temp_file_path)
         file_serializer = FileSerializer(file)
 
-        return Response({'data': file_serializer.data, 'details': 'Conectado com sucesso'}, status=status.HTTP_200_OK)
+        return Response({'data': file_serializer.data}, status=status.HTTP_200_OK)
 
     except Exception as e:
         return Response({'error': f'Erro ao receber arquivo: {str(e)}'}, status=status.HTTP_400_BAD_REQUEST)

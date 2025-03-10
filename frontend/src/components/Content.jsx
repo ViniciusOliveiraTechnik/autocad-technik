@@ -1,25 +1,27 @@
-import { use, useState } from "react";
+import { useState } from "react";
 import ActiveFileButton from "./ActiveFileButton";
 import ExtractButton from "./ExtractButton";
 import TagTable from "./TagTable";
 import NotFoundTable from "./NotFoundTable";
 import ModifyButton from "./ModifyButton";
-import { RecieveFile } from "../api/RecieveFile";
 import ExtractTags from "../api/ExtractTags";
+import useFileConnection from "../hooks/useFileConnection";
+import useNotification from "../hooks/useNotification";
 
 function Content() {
-  const [fileInfo, setFileInfo] = useState({
-    filename: "Nenhum arquivo",
-    details: "Se conecte a um arquivo",
-  });
-  const [fileData, setFileData] = useState(null);
-  const [isFileConected, setIsFileConected] = useState(false);
-  const [isFileConnectionLoading, setIsFileConnectionLoading] = useState(false);
+  const {
+    fileConnectionState,
+    isFileConnected,
+    isFileConnectionLoading,
+    pingEffect,
+    handleFileConnection,
+  } = useFileConnection();
 
+  const { visible, textContent, showNotification } = useNotification();
+  
+  const [fileData, setFileData] = useState(null);
   const [isLoadingExtract, setIsLoadingExtract] = useState(false);
   const [extractedTags, setExtractedTags] = useState(null);
-
-  const [pingEffect, setPingEffect] = useState("neutral");
 
   const [error, setError] = useState(null);
 
@@ -38,61 +40,21 @@ function Content() {
     setIsLoadingExtract(false);
   };
 
-  const handleSelectFile = async (event) => {
-    setIsFileConnectionLoading(true);
-
-    const selectedFile = event.target.files[0];
-
-    if (!selectedFile) {
-      setFileInfo({
-        filename: "Nenhum arquivo", // Corrigido o erro de digitação
-        details: "Se conecte a um arquivo",
-      });
-      setPingEffect("neutral"); // Atualize o status diretamente
-      setExtractedTags([]);
-
-      setIsFileConnectionLoading(false);
-      return;
-    }
-
-    const response = await RecieveFile(selectedFile);
-
-    if (response.error) {
-      setFileInfo({
-        filename: "Falha na conexão",
-        details: response.error,
-      });
-      setPingEffect("fail"); // Atualize o status diretamente
-
-      setIsFileConnectionLoading(false);
-      return;
-    }
-
-    // Caso tenha sucesso na conexão
-    setFileInfo({
-      filename: response.data.file_name,
-      details: response.details,
-    });
-    setPingEffect("success");
-
-    setFileData(response.data);
-    setIsFileConnectionLoading(false);
-    setIsFileConected(true);
-  };
-
   return (
     <section className="h-screen overflow-y-auto flex flex-col gap-4 p-6 bg-gray-100">
+      <div hidden={!visible}>Teste</div>
+
       {/* Botão de Arquivo Ativo */}
       <ActiveFileButton
         pingEffect={pingEffect}
-        onChange={handleSelectFile}
-        fileInfo={fileInfo}
+        onChange={handleFileConnection}
+        fileConnectionState={fileConnectionState}
         isFileConnectionLoading={isFileConnectionLoading}
       />
 
       {/* Botão de Extração */}
       <ExtractButton
-        disabled={!isFileConected || isLoadingExtract}
+        disabled={!isFileConnected || isLoadingExtract}
         onClick={handleExtractTags}
         isLoadingExtract={isLoadingExtract}
       />
