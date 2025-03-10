@@ -4,97 +4,74 @@ from rest_framework import permissions
 from rest_framework import status
 
 import os
-import uuid
 import pandas as pd
 import tempfile
 
-from .utilits import AutoCadManipulator
-from .models import Tag, User
-from .serializers import TagSerializer
+from .utilits import AutocadManipulator
+from .models import Tag, File
+from .serializers import TagSerializer, FileSerializer
 
 @api_view(['POST'])
 @permission_classes((permissions.AllowAny,))
-def connect_file(request):
-    if 'file' not in request.FILES:
-        return Response({'error': 'Nenhum arquivo enviado'}, status=status.HTTP_400_BAD_REQUEST)
-    
-    file = request.FILES['file']
-
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".dwg") as temp_file:
-        for chunk in file.chunks():
-            temp_file.write(chunk)
-
-        temp_file_path = temp_file.name
-        temp_file_name = os.path.basename(temp_file_path)
-    
-    autocad = AutoCadManipulator()
-    connection = autocad.auth_autocad(temp_file_path)
-    if connection['success']:
-        acad = autocad.active_document
-
-    return Response({'filename': temp_file_name, 'details': 'Conectado com sucesso'}, status=status.HTTP_200_OK)
-
-@api_view(['POST'])
-@permission_classes((permissions.AllowAny,))
-def upload_file(request):
-    if 'file' not in request.FILES:
-        return Response({'error': 'Nenhum arquivo enviado.'}, status=status.HTTP_400_BAD_REQUEST)
-    
-    file = request.FILES['file']
-    
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".dwg") as temp_file:
-        for chunk in file.chunks():
-            temp_file.write(chunk)
+def recieve_file(request):
+    try:
+        if 'file' not in request.FILES:
+            return Response({'error': 'Nenhum arquivo enviado'}, status=status.HTTP_400_BAD_REQUEST)
         
-        temp_file_path = temp_file.name
+        file = request.FILES['file']
 
-    atc = AutoCadManipulator()
-    connection = atc.auth_autocad(temp_file_path)
+        if not file.name.lower().endswith('.dwg'):
+            return Response({'error': 'Formato de arquivo não suportado, "dwg" esperado'}, status=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
 
-    if connection.success:
-        acad = atc.active_document
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".dwg") as temp_file:
+            for chunk in file.chunks():
+                temp_file.write(chunk)
 
-        try:        
-            temp_user = User.objects.create(username=f"temp_{uuid.uuid4().hex[:8]}")
-        except Exception as error:
-            return Response({'error': f'Não foi possível criar o usuário temporário: {str(error)}'})
+            temp_file.flush()
+            temp_file_path = temp_file.name
+            temp_file_name = os.path.basename(temp_file_path)
 
         try:
-            tags = atc.get_tags(acad)  
-
-            tags_df = pd.DataFrame(tags, columns=['old_tag']).drop_duplicates(ignore_index=True)
-            tags_objects = [Tag(old_tag=row.old_tag, user=temp_user) for _, row in tags_df.iterrows()]
+            manipulator = AutocadManipulator()
+            manipulator.connect_to_autocad(temp_file_path)
             
-            Tag.objects.bulk_create(tags_objects)
-
-            data = Tag.objects.filter(user=temp_user)
-            serializer = TagSerializer(data, many=True)
-
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            os.remove(temp_file_path)
+            return Response({'error': f'Erro ao se conectar ao AutoCAD: {str(e)}'}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
         
-        except Exception as error:
-            return Response({'error': f'Não foi possível extrair as tags: {str(error)}'})
-        # try:
-        #     Tag.objects.all().delete()
-            
-        #     tags = atc.get_tags(acad)
+        file = File.objects.create(file_name=temp_file_name, file_path=temp_file_path)
+        file_serializer = FileSerializer(file)
 
-        #     tags_df = pd.DataFrame(tags, columns=['old_tag']).drop_duplicates(ignore_index=True)
+        return Response({'data': file_serializer.data, 'details': 'Conectado com sucesso'}, status=status.HTTP_200_OK)
 
-        #     tags_objects = [Tag(old_tag=row.old_tag) for _, row in tags_df.iterrows()]
-        #     Tag.objects.bulk_create(tags_objects)
+    except Exception as e:
+        return Response({'error': f'Erro ao receber arquivo: {str(e)}'}, status=status.HTTP_400_BAD_REQUEST)
 
-        #     data = Tag.objects.all()
-        #     serializer = TagSerializer(data, many=True)
-
-        #     return Response(serializer.data, status=status.HTTP_200_OK)
-        
-        # except Exception as error:  
-        #     return Response({'error': str(error)}, status=status.HTTP_406_NOT_ACCEPTABLE)
-        
 @api_view(['POST'])
 @permission_classes((permissions.AllowAny,))
-def modify_tags(request):
-    serializer = TagSerializer(data=request.data)
-    if serializer.is_valid():
-        print(serializer.data)
+def extract_tags(request, file_id):
+    try:
+        file = File.objects.get(id=file_id)
+
+        try:
+            manipulator = AutocadManipulator()
+            manipulator.connect_to_autocad(file.file_path)
+
+            acad_doc = manipulator.acad_doc
+            tag_values = manipulator.extract_tags(acad_doc)
+
+            tag_objects = [Tag(old_tag=value, new_tag="", file_id=file) for value in tag_values]
+
+            Tag.objects.bulk_create(tag_objects)
+
+            tag_serializer = TagSerializer(tag_objects, many=True)
+
+            return Response(tag_serializer.data, status=status.HTTP_201_CREATED)
+
+        except Exception as e:
+            return Response({'error': f'Erro ao obter dados do AutoCAD: {str(e)}'}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+
+    except File.DoesNotExist:
+        return Response({'error': 'Arquivo não encontrado'}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({'error': f'Erro inesperado: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

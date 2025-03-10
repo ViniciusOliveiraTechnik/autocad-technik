@@ -1,62 +1,83 @@
-import { useState } from "react";
+import { use, useState } from "react";
 import ActiveFileButton from "./ActiveFileButton";
 import ExtractButton from "./ExtractButton";
 import TagTable from "./TagTable";
 import NotFoundTable from "./NotFoundTable";
 import ModifyButton from "./ModifyButton";
-import { connectFile } from "../api/connectFile";
+import { RecieveFile } from "../api/RecieveFile";
+import ExtractTags from "../api/ExtractTags";
 
 function Content() {
   const [fileInfo, setFileInfo] = useState({
     filename: "Nenhum arquivo",
     details: "Se conecte a um arquivo",
   });
-  const [isDataLoaded, setIsDataLoaded] = useState(false);
+  const [fileData, setFileData] = useState(null);
   const [isFileConected, setIsFileConected] = useState(false);
+  const [isFileConnectionLoading, setIsFileConnectionLoading] = useState(false);
+
+  const [isLoadingExtract, setIsLoadingExtract] = useState(false);
+  const [extractedTags, setExtractedTags] = useState(null);
+
   const [pingEffect, setPingEffect] = useState("neutral");
-  const [file, setFile] = useState(null);
+
   const [error, setError] = useState(null);
 
-  const handleLoadConnection = () => {
-    return;
-  };
-  
-  const handleSelectFile = async (event) => {
-    const selectedFile = event.target.files[0];
-    setFile(selectedFile);
-
-    if (!selectedFile) {
-      setFileInfo({
-        filename: "Nenhum arquivo",
-        details: "Se conecte a um arquivo",
-      });
-      setPingEffect("neutral");
-      setIsFileConected(false);
-      setFile(null);
+  const handleExtractTags = async () => {
+    setIsLoadingExtract(true);
+    if (!fileData) {
       return;
     }
 
-    try {
-      const response = await connectFile(selectedFile);
-
-      if (response.error) {
-        console.log("Erro recebido:", response.error);
-        setError(response.error);
-        setPingEffect("fail");
-      } else {
-        setError(null);
-        setPingEffect("success");
-        setFileInfo({
-          filename: response.filename,
-          details: response.details,
-        });
-        setIsFileConected(true);
-      }
-    } catch (err) {
-      console.error(err);
-      setError("Erro inesperado ao conectar o arquivo");
-      setPingEffect("fail");
+    const data = await ExtractTags(fileData.id);
+    if (data.error) {
+      return;
     }
+
+    setExtractedTags(data);
+    setIsLoadingExtract(false);
+  };
+
+  const handleSelectFile = async (event) => {
+    setIsFileConnectionLoading(true);
+
+    const selectedFile = event.target.files[0];
+
+    if (!selectedFile) {
+      setFileInfo({
+        filename: "Nenhum arquivo", // Corrigido o erro de digitação
+        details: "Se conecte a um arquivo",
+      });
+      setPingEffect("neutral"); // Atualize o status diretamente
+      setExtractedTags([]);
+
+      setIsFileConnectionLoading(false);
+      return;
+    }
+
+    const response = await RecieveFile(selectedFile);
+
+    if (response.error) {
+      setFileInfo({
+        filename: "Falha na conexão",
+        details: response.error,
+      });
+      setPingEffect("fail"); // Atualize o status diretamente
+
+      setIsFileConnectionLoading(false);
+      return;
+    }
+
+    // Caso tenha sucesso na conexão
+    setFileInfo({
+      filename: response.data.file_name,
+      details: response.details,
+    });
+    setPingEffect("success");
+
+    setFileData(response.data);
+    setIsFileConnectionLoading(false);
+    setIsFileConected(true);
   };
 
   return (
@@ -66,16 +87,21 @@ function Content() {
         pingEffect={pingEffect}
         onChange={handleSelectFile}
         fileInfo={fileInfo}
+        isFileConnectionLoading={isFileConnectionLoading}
       />
 
       {/* Botão de Extração */}
-      <ExtractButton disabled={!isFileConected} />
+      <ExtractButton
+        disabled={!isFileConected || isLoadingExtract}
+        onClick={handleExtractTags}
+        isLoadingExtract={isLoadingExtract}
+      />
 
       {/* Conteúdo Dinâmico */}
-      {isDataLoaded ? (
+      {extractedTags ? (
         <div className="flex flex-col gap-4">
           {/* Tabela de Tags */}
-          <TagTable />
+          <TagTable tagItems={extractedTags} />
 
           {/* Botão de Modificação */}
           <ModifyButton />

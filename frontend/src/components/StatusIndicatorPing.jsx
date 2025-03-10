@@ -1,14 +1,14 @@
 export default function StatusIndicatorPing({ pingEffect }) {
   const pingCondition = {
     color: {
-      success: "bg-sky-500",
-      fail: "bg-red-500",
+      success: "bg-primary-blue",
+      fail: "bg-primary-red",
       neutral: "bg-slate-400",
     },
 
     effect: {
-      success: "bg-sky-400 animate-ping",
-      fail: "bg-red-400 animate-ping",
+      success: "bg-primary-blue/50 animate-ping",
+      fail: "bg-primary-red/50 animate-ping",
       neutral: "bg-slate-300",
     },
   };

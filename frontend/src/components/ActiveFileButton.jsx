@@ -1,7 +1,13 @@
 import { useRef } from "react";
+import Spinner from "./UI/Spinner/Spinner";
 import StatusIndicatorPing from "./StatusIndicatorPing";
 
-export default function ActiveFileButton({ pingEffect, onChange, fileInfo }) {
+export default function ActiveFileButton({
+  pingEffect,
+  onChange,
+  fileInfo,
+  isFileConnectionLoading,
+}) {
   const fileInputRef = useRef(null);
 
   const handleRefClick = () => {
@@ -15,6 +21,7 @@ export default function ActiveFileButton({ pingEffect, onChange, fileInfo }) {
         onClick={handleRefClick}
         aria-label="Selecionar arquivo"
         aria-describedby="file-status"
+        disabled={isFileConnectionLoading}
       >
         <div className="text-start">
           <h2 className="text-title-mobile md:text-title-desktop font-semibold text-gray-900">
@@ -28,7 +35,11 @@ export default function ActiveFileButton({ pingEffect, onChange, fileInfo }) {
           </p>
         </div>
 
-        <StatusIndicatorPing pingEffect={pingEffect} />
+        {isFileConnectionLoading ? (
+          <Spinner extraStyles="text-primary-red"/>
+        ) : (
+          <StatusIndicatorPing pingEffect={pingEffect} />
+        )}
       </button>
       <input
         type="file"

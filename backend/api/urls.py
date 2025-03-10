@@ -3,6 +3,6 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('connect-file/', views.connect_file, name='tag-list'),
-    path('upload-file/', views.upload_file, name='upload_file')
+    path('recieve-file/', views.recieve_file, name='recieve-file'),
+    path('extract-tags/<str:file_id>', views.extract_tags, name='extract-tags'),
 ]
