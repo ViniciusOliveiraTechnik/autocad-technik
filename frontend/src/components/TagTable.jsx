@@ -1,6 +1,6 @@
 import Row from "./UI/Table/Row";
 
-export default function TagTable({ tagItems }) {
+export default function TagTable({ tagResponse }) {
   return (
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg max-h-[500px] 2xl:max-h-[600px]">
       <table className="table-primary">
@@ -11,8 +11,8 @@ export default function TagTable({ tagItems }) {
           </tr>
         </thead>
         <tbody className="text-default-mobile md:text-default-desktop">
-          {tagItems.map((tag) => (
-            <Row key={tag.id} tag={tag} />
+          {tagResponse.map((tag) => (
+            <Row key={tag.id} content={tag.old_tag} />
           ))}
         </tbody>
       </table>

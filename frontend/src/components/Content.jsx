@@ -1,46 +1,26 @@
-import { useState } from "react";
 import ActiveFileButton from "./ActiveFileButton";
 import ExtractButton from "./ExtractButton";
 import TagTable from "./TagTable";
 import NotFoundTable from "./NotFoundTable";
 import ModifyButton from "./ModifyButton";
-import ExtractTags from "../api/ExtractTags";
-import useFileConnection from "../hooks/useFileConnection";
+import useFileConnection from "../hooks/useFileConnection.jsx";
 import useNotification from "../hooks/useNotification";
 import Notification from "./UI/Notification/Notification";
+import useExtractTags from "../hooks/useExtractTags.jsx";
 
 function Content() {
   const {
+    fileResponse,
     fileConnectionState,
-    isFileConnected,
     isFileConnectionLoading,
     pingEffect,
     handleFileConnection,
   } = useFileConnection();
 
-  const { visible, textContent, notificationType, showNotification } =
-    useNotification();
+  const { visible, textContent, notificationType } = useNotification();
 
-  const [fileData, setFileData] = useState(null);
-  const [isLoadingExtract, setIsLoadingExtract] = useState(false);
-  const [extractedTags, setExtractedTags] = useState(null);
-
-  const [error, setError] = useState(null);
-
-  const handleExtractTags = async () => {
-    setIsLoadingExtract(true);
-    if (!fileData) {
-      return;
-    }
-
-    const data = await ExtractTags(fileData.id);
-    if (data.error) {
-      return;
-    }
-
-    setExtractedTags(data);
-    setIsLoadingExtract(false);
-  };
+  const { tagResponse, isExtractionRunning, handleExtractTags } =
+    useExtractTags();
 
   return (
     <section className="h-screen overflow-y-auto flex flex-col gap-4 p-6 bg-gray-100">
@@ -60,16 +40,16 @@ function Content() {
 
       {/* Botão de Extração */}
       <ExtractButton
-        disabled={!isFileConnected || isLoadingExtract}
-        onClick={handleExtractTags}
-        isLoadingExtract={isLoadingExtract}
+        disabled={!fileResponse || isExtractionRunning}
+        onClick={() => handleExtractTags(fileResponse.id)}
+        isLoadingExtract={isExtractionRunning}
       />
 
       {/* Conteúdo Dinâmico */}
-      {extractedTags ? (
+      {tagResponse ? (
         <div className="flex flex-col gap-4">
           {/* Tabela de Tags */}
-          <TagTable tagItems={extractedTags} />
+          <TagTable tagResponse={tagResponse} />
 
           {/* Botão de Modificação */}
           <ModifyButton />
