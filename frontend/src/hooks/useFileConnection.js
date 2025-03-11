@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { RecieveFile } from "../api/RecieveFile";
-import { useNotification } from "../hooks/useNotification";
+import useNotification from "./useNotification";
 
 export default function useFileConnection() {
   const [fileConnectionState, setFileConnectionState] = useState({
@@ -15,7 +15,6 @@ export default function useFileConnection() {
 
   const handleFileConnection = async (event) => {
     setIsFileConnectionLoading(true);
-    showNotification("teste");
 
     const selectedFile = event.target.files[0];
 
@@ -27,6 +26,7 @@ export default function useFileConnection() {
       setPingEffect("neutral");
       setIsFileConnected(false);
       setIsFileConnectionLoading(false);
+      showNotification("Nenhum arquivo selecionado", "error", 1500);
 
       return;
     }
@@ -41,6 +41,7 @@ export default function useFileConnection() {
       setPingEffect("fail");
       setIsFileConnected(false);
       setIsFileConnectionLoading(false);
+      showNotification(`Erro: ${response.error}`, "error", 2000);
       return;
     }
 
@@ -51,6 +52,11 @@ export default function useFileConnection() {
     setPingEffect("success");
     setIsFileConnectionLoading(false);
     setIsFileConnected(true);
+    showNotification(
+      `${response.data.file_name} foi conectado com sucesso`,
+      "normal",
+      2000
+    );
   };
 
   return {

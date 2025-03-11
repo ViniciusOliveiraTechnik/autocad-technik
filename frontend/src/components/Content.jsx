@@ -7,6 +7,7 @@ import ModifyButton from "./ModifyButton";
 import ExtractTags from "../api/ExtractTags";
 import useFileConnection from "../hooks/useFileConnection";
 import useNotification from "../hooks/useNotification";
+import Notification from "./UI/Notification/Notification";
 
 function Content() {
   const {
@@ -17,8 +18,9 @@ function Content() {
     handleFileConnection,
   } = useFileConnection();
 
-  const { visible, textContent, showNotification } = useNotification();
-  
+  const { visible, textContent, notificationType, showNotification } =
+    useNotification();
+
   const [fileData, setFileData] = useState(null);
   const [isLoadingExtract, setIsLoadingExtract] = useState(false);
   const [extractedTags, setExtractedTags] = useState(null);
@@ -42,7 +44,11 @@ function Content() {
 
   return (
     <section className="h-screen overflow-y-auto flex flex-col gap-4 p-6 bg-gray-100">
-      <div hidden={!visible}>Teste</div>
+      <Notification
+        textContent={textContent}
+        hidden={visible}
+        type={notificationType}
+      />
 
       {/* Botão de Arquivo Ativo */}
       <ActiveFileButton
