@@ -4,6 +4,8 @@ from rest_framework import permissions
 from rest_framework import status
 
 import os
+import json
+from uuid import UUID
 import pandas as pd
 import tempfile
 
@@ -39,6 +41,8 @@ def recieve_file(request):
             os.remove(temp_file_path)
             return Response({'error': f'Erro ao se conectar ao AutoCAD: {str(e)}'}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
         
+        File.objects.all().delete()
+
         file = File.objects.create(file_name=temp_file_name, file_path=temp_file_path)
         file_serializer = FileSerializer(file)
 
@@ -55,12 +59,18 @@ def extract_tags(request, file_id):
 
         try:
             manipulator = AutocadManipulator()
-            manipulator.connect_to_autocad(file.file_path)
+            acad = manipulator.connect_to_autocad(file.file_path)
 
-            acad_doc = manipulator.acad_doc
-            tag_values = manipulator.extract_tags(acad_doc)
+            try:
+                tag_values = json.loads(manipulator.extract_tags(acad))   
+                
+            except json.JSONDecodeError:
+                return Response({'error': 'Erro ao processar os dados obtidos do AutoCAD'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-            tag_objects = [Tag(old_tag=value, new_tag="", file_id=file) for value in tag_values]
+            tag_objects = [Tag(old_tag=tag['old_tag'], old_tag_regex=tag['old_tag_regex'], new_tag="", file_id=file) for tag in tag_values]
+
+            # Verify if already have tags for this file
+            tags = Tag.objects.filter(file_id=file).delete()
 
             Tag.objects.bulk_create(tag_objects)
 
@@ -69,9 +79,52 @@ def extract_tags(request, file_id):
             return Response(tag_serializer.data, status=status.HTTP_201_CREATED)
 
         except Exception as e:
-            return Response({'error': f'Erro ao obter dados do AutoCAD: {str(e)}'}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+            return Response({'error': f'Erro ao obter dados do AutoCAD: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     except File.DoesNotExist:
-        return Response({'error': 'Arquivo não encontrado'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'error': 'Arquivo não encontrado ou não existente'}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
-        return Response({'error': f'Erro inesperado: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+@api_view(['POST'])
+@permission_classes((permissions.AllowAny,))
+def modify_tags(request, file_id): 
+    data = request.data.get('data')
+
+    if not data:
+        return Response({'error': 'Nenhum dado recebido para modificação'}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        file = File.objects.get(id=file_id)
+    except File.DoesNotExist:
+        return Response({'error': 'Arquivo não encontrado ou não existente'}, status=status.HTTP_404_NOT_FOUND)
+
+    try:
+        manipulator = AutocadManipulator()
+        acad = manipulator.connect_to_autocad(file.file_path)
+
+        tag_ids = [UUID(tag['id']) for tag in data]
+        tag_map = Tag.objects.in_bulk(tag_ids)
+
+        updated_tags = []
+        
+        for tag in data:
+            tag_instance = tag_map.get(UUID(tag['id']))
+            if not tag_instance:
+                return Response({'error': f'A Tag "{tag["old_tag_regex"]}" não foi encontrada'}, status=status.HTTP_404_NOT_FOUND)
+
+            tag_instance.new_tag = tag['new_tag']
+            updated_tags.append(tag_instance)
+
+        Tag.objects.bulk_update(updated_tags, ['new_tag'])
+
+        tag_serializer = TagSerializer(updated_tags, many=True)
+        manipulator.modify_tags(acad)
+
+        return Response(tag_serializer.data, status=status.HTTP_200_OK)
+
+    except File.DoesNotExist:
+        return Response({'error': 'Arquivo do AutoCAD não encontrado'}, status=status.HTTP_404_NOT_FOUND)
+
+    except Exception as e:
+        return Response({'error': f'Erro ao modificar dados do AutoCAD: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

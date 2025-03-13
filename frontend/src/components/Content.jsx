@@ -1,11 +1,12 @@
 import ActiveFileButton from "./ActiveFileButton";
+import ModifyButton from "./ModifyButton";
 import ExtractButton from "./ExtractButton";
 import TagTable from "./TagTable";
 import NotFoundTable from "./NotFoundTable";
-import ModifyButton from "./ModifyButton";
+import Notification from "./UI/Notification/Notification";
+
 import useFileConnection from "../hooks/useFileConnection.jsx";
 import useNotification from "../hooks/useNotification";
-import Notification from "./UI/Notification/Notification";
 import useExtractTags from "../hooks/useExtractTags.jsx";
 
 function Content() {
@@ -46,17 +47,7 @@ function Content() {
       />
 
       {/* Conteúdo Dinâmico */}
-      {tagResponse ? (
-        <div className="flex flex-col gap-4">
-          {/* Tabela de Tags */}
-          <TagTable tagResponse={tagResponse} />
-
-          {/* Botão de Modificação */}
-          <ModifyButton />
-        </div>
-      ) : (
-        <NotFoundTable />
-      )}
+      {tagResponse ? <TagTable tagResponse={tagResponse} fileID={fileResponse.id} /> : <NotFoundTable />}
     </section>
   );
 }

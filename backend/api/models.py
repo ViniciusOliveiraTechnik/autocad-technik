@@ -16,7 +16,8 @@ class Tag(models.Model):
     file_id = models.ForeignKey(File, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     old_tag = models.CharField(max_length=80, default='', blank=False)
-    new_tag = models.CharField(max_length=80, default='', blank=False)
+    old_tag_regex = models.CharField(max_length=80, default='', blank=False)
+    new_tag = models.CharField(max_length=80, default='', blank=True)
 
     def __str__(self):
         return f'Tag {self.old_tag} -> {self.new_tag}'

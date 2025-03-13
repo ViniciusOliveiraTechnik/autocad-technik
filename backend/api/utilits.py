@@ -1,61 +1,55 @@
 import os
+import re
 
 import pandas as pd
 
 import pythoncom as pycom
-import comtypes.client as ctypes_client
 from comtypes import COMError
+from pyautocad import Autocad
 
+from .models import *
+from .serializers import *
 class AutocadManipulator:
     def __init__(self):
-        self.acad_app = None
-        self.acad_doc = None
-        self.model_space = None
+        pass
 
     def connect_to_autocad(self, temp_file_path):
         try:
-            pycom.CoInitialize() # Get COM sources
-
-            if not os.path.exists(temp_file_path):
-                raise FileNotFoundError(f'Não foi possível encontrar o arquivo: {temp_file_path}')
+            pycom.CoInitialize() # Send the COM sources tho the system
             
+            acad = Autocad(create_if_not_exists=True)
+            acad.app.Documents.Open(temp_file_path)
+
+            return acad # Return the acad document
+        
+        except COMError as err:
+            raise err
+        except Exception as err:
+            raise err
+        
+    def extract_tags(self, acad):
+        if not acad:
+            raise RuntimeError("O AutoCAD não está conectado corretamente, se conecte primeiro!")
+        
+        text_objects = [obj.TextString for obj in acad.iter_objects(['Text'])]
+
+        # ESSA PARTE AINDA NÃO FOI TOTALMENTE FINALIZADA
+        text_dataframe = pd.DataFrame(text_objects, columns=['old_tag'])
+        text_dataframe = text_dataframe[text_dataframe['old_tag'].str.upper().str.contains('TECH')].drop_duplicates(ignore_index=True)
+        text_dataframe['old_tag_regex'] = text_dataframe['old_tag']
+
+        return text_dataframe.to_json(orient="records")
+
+    def modify_tags(self, acad):
+        if not acad:
+            raise RuntimeError('O AutoCAD não está conectado corretamente, se conecte primeiro!')
+        
+        for text_object in acad.iter_objects(['Text']):
             try:
-                self.acad_app = ctypes_client.GetActiveObject('AutoCAD.Application')
-            except Exception:
-                self.acad_app = ctypes_client.CreateObject('AutoCAD.Application')
+                tag = Tag.objects.get(old_tag=str(text_object.TextString))
+                
+                if tag.new_tag:
+                    text_object.TextString = str(text_object.TextString).replace(tag.old_tag, tag.new_tag)
 
-            self.acad_app.Visible = True
-            self.acad_doc = self.acad_app.Documents.Open(temp_file_path)
-        
-        except COMError as e:
-            raise e
-        except Exception as e:
-            raise e
-        
-    def extract_tags(self, acad_app):        
-
-        def text_definition(text_obj):
-            try:
-                return text_obj.TextString
-            except Exception:
-                return text_obj.Text
-
-        try:    
-            self.model_space = acad_app.ModelSpace
-
-            tag_data = [text_definition(obj) for obj in self.model_space if obj.ObjectName in ["AcDbText", "AcDbMText"]]
-
-            print(tag_data)
-
-            tag_df = pd.DataFrame(tag_data, columns=['old_tag'])
-            tag_df = tag_df[tag_df['old_tag'].str.upper().str.contains('TECH')]
-            
-            if tag_df.empty:
-                return 
-            
-            return tag_df['old_tag'].to_list()
-        
-        except Exception as e:
-            raise e
-        
-        
+            except Tag.DoesNotExist:
+                continue
