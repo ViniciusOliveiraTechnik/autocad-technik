@@ -5,7 +5,7 @@ export default async function ExtractTags(file_id) {
 
   try {
     const response = await axios.post(
-      `http://127.0.0.1:8000/api/extract-tags/${file_id}`,
+      `http://autocad-technik.railway.internal:8000/api/extract-tags/${file_id}`,
       {},
       {
         headers: {
