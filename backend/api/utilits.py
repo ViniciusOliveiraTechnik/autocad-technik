@@ -5,10 +5,12 @@ import pandas as pd
 
 try:
     from pyautocad import Autocad
-    import pythoncom as pycom
-    from comtypes import COMError
+    import pythoncom as pycom    
+    # from comtypes import COMError
 except ModuleNotFoundError:
     pycom = None
+
+
 
 from .models import *
 from .serializers import *
@@ -25,8 +27,8 @@ class AutocadManipulator:
 
             return acad # Return the acad document
         
-        except COMError as err:
-            raise err
+        # except COMError as err:
+        #     raise err
         except Exception as err:
             raise err
         
