@@ -9,7 +9,7 @@ export default function TagTable({ tagResponse, fileID }) {
   const [tableContent, setTableContent] = useState(tagResponse);
   const [isModifyingRunning, setIsModifyingRunning] = useState(false);
 
-  const { visible, textContent, notificationType, showNotification } = useNotification();
+  const { showNotification } = useNotification();
 
   const handleInputChangeValue = (id, field, value) => {
     const updateData = tableContent.map((tag) =>
@@ -19,15 +19,20 @@ export default function TagTable({ tagResponse, fileID }) {
     setTableContent(updateData);
   };
 
-  const handleModifyTags = (fileID) => {
+  const handleModifyTags = async (fileID) => {
     setIsModifyingRunning(true);
     if (!fileID) {
       return;
     }
 
-    const response = ModifyTags(fileID, tableContent);
+    const response = await ModifyTags(fileID, tableContent);
 
-    console.log(response);
+    if (response.error) {
+      setIsModifyingRunning(false);
+      showNotification(`${response.error}`, "error", 2500);
+    }
+
+    showNotification(`Tags modificadas com sucesso!`, "normal", 2500);
     setIsModifyingRunning(false);
   };
 
@@ -71,6 +76,7 @@ export default function TagTable({ tagResponse, fileID }) {
       <ModifyButton
         onClick={() => handleModifyTags(fileID)}
         disabled={isModifyingRunning}
+        isModifyingRunning={isModifyingRunning}
       />
     </div>
   );

@@ -3,13 +3,9 @@ import re
 
 import pandas as pd
 
-try:
-    from pyautocad import Autocad
-    import pythoncom as pycom    
-    # from comtypes import COMError
-except ModuleNotFoundError:
-    pycom = None
-
+from pyautocad import Autocad
+import pythoncom as pycom
+from comtypes import COMError
 
 
 from .models import *

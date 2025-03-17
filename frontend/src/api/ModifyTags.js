@@ -8,7 +8,7 @@ export default async function ModifyTags(file_id, tableContent) {
 
     const response = await axios.post(
       `http://127.0.0.1:8000/api/modify-tags/${file_id}`,
-      jsonData, 
+      jsonData,
       {
         headers: {
           "Content-Type": "application/json",
@@ -16,10 +16,9 @@ export default async function ModifyTags(file_id, tableContent) {
       }
     );
 
-    console.log(response.data);
     return response.data;
+
   } catch (error) {
-    console.error(error);
     return error.response
       ? error.response.data
       : { error: "Erro desconhecido" };

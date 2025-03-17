@@ -6,7 +6,7 @@ export const RecieveFile = async (file) => {
     formData.append("file", file);
 
     const response = await axios.post(
-      "http://autocad-technik-production.up.railway.app/api/recieve-file/",
+      "http://127.0.0.1:8000/api/recieve-file/",
       formData,
       { headers: { "Content-Type": "multipart/form-data" } }
     );

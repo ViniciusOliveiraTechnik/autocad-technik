@@ -14,7 +14,7 @@ export default async function ExtractTags(file_id) {
       }
     );
     
-    return response.data;
+    return response.data; 
 
   } catch (error) {
     return error.response

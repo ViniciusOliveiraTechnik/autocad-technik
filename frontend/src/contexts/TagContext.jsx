@@ -17,7 +17,7 @@ export function TagProvider({ children }) {
       showNotification(
         "Não foi possível localizar o arquivo desejado",
         "error",
-        2000
+        2500
       );
       setTagsResponse(null);
       setIsExtractionRunning(false);
@@ -27,14 +27,14 @@ export function TagProvider({ children }) {
     const response = await ExtractTags(fileResponseId);
 
     if (response.error) {
-      showNotification(`Erro | ${response.error}`, "error", 2000);
+      showNotification(`${response.error}`, "error", 2500);
       setTagsResponse(null);
       setIsExtractionRunning(false);
       return;
     }
     console.log(response);
 
-    showNotification(`${response.length} tags extraídas`, "normal", 2000);
+    showNotification(`${response.length} tags extraídas`, "normal", 2500);
     setTagsResponse(response);
     setIsExtractionRunning(false);
   };

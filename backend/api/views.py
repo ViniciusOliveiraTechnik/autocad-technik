@@ -17,6 +17,7 @@ from .serializers import TagSerializer, FileSerializer
 @permission_classes((permissions.AllowAny,))
 def recieve_file(request):
     try:
+        print('chamoui')
         if 'file' not in request.FILES:
             return Response({'error': 'Nenhum arquivo enviado'}, status=status.HTTP_400_BAD_REQUEST)
         
