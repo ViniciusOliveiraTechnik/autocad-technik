@@ -1,8 +1,9 @@
-import Content from "./components/Content";
+import { Outlet } from "react-router-dom";
 
-
-function App() {
-  return <Content />;
+export default function App() {
+  return (
+    <div>
+      <Outlet />
+    </div>
+  );
 }
-
-export default App;

@@ -5,7 +5,7 @@ import StatusIndicatorPing from "./StatusIndicatorPing";
 export default function ActiveFileButton({
   pingEffect,
   onChange,
-  fileInfo,
+  fileConnectionState,
   isFileConnectionLoading,
 }) {
   const fileInputRef = useRef(null);
@@ -25,18 +25,18 @@ export default function ActiveFileButton({
       >
         <div className="text-start">
           <h2 className="text-title-mobile md:text-title-desktop font-semibold text-gray-900">
-            {fileInfo.filename}
+            {fileConnectionState.fileName}
           </h2>
           <p
             id="file-status"
             className="text-default-mobile md:text-default-desktop font-light text-gray-600"
           >
-            {fileInfo.details}
+            {fileConnectionState.connectionState}
           </p>
         </div>
 
         {isFileConnectionLoading ? (
-          <Spinner extraStyles="text-primary-red"/>
+          <Spinner extraStyles="text-primary-red" />
         ) : (
           <StatusIndicatorPing pingEffect={pingEffect} />
         )}
