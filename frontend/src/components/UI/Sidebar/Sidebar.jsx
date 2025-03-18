@@ -6,7 +6,7 @@ export default function Sidebar({ children }) {
   return (
     <div
       className={`h-screen transition-all duration-300 ease-in-out ${
-        isSidebarActivated ? "w-[250px] opacity-100" : "w-[80px] opacity-100"
+        isSidebarActivated ? "w-[300px] opacity-100" : "w-[80px] opacity-100"
       }`}
     >
       {children}

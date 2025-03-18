@@ -12,6 +12,7 @@ export function TagProvider({ children }) {
 
   const handleExtractTags = async (fileResponseId) => {
     setIsExtractionRunning(true);
+    
 
     if (!fileResponseId) {
       showNotification(

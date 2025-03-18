@@ -14,6 +14,7 @@ export default function DropdownSwitch({ items }) {
   const { isSidebarActivated, setIsSidebarActivated } = useSidebar();
 
   const toggleActive = () => setIsActive((prev) => !prev);
+
   const handleItemClick = (item) => {
     setActiveAplication(item);
     setIsActive(false);
@@ -25,7 +26,7 @@ export default function DropdownSwitch({ items }) {
       onClick={toggleActive}
     >
       <div className="flex items-center gap-3">
-        <span className="text-white p-1 bg-primary-blue rounded">
+        <span className="text-white p-1 bg-black rounded">
           {activeAplication.icon}
         </span>
         <div>
@@ -46,7 +47,7 @@ export default function DropdownSwitch({ items }) {
   ) : (
     <div className="flex items-center justify-center mt-3">
       <span
-        className="bg-primary-blue hover:bg-secondary-blue text-white p-3 rounded-md cursor-pointer transition-all duration-300"
+        className="bg-black hover:bg-gray-700 text-white p-3 rounded-md cursor-pointer transition-all duration-300"
         onClick={() => setIsSidebarActivated(true)}
       >
         {activeAplication.icon}
@@ -58,7 +59,7 @@ export default function DropdownSwitch({ items }) {
     <div
       className={`w-full bg-white rounded mt-1 overflow-hidden transition-all origin-top text-slate-800 ease-in-out ${
         isActive
-          ? "scale-y-100 opacity-100 max-h-[500px]"
+          ? "scale-y-100 opacity-100 max-h-[300px] overflow-y-auto"
           : "scale-y-0 opacity-0 max-h-0"
       }`}
     >
