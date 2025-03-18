@@ -1,4 +1,4 @@
-import DropdownContent from "@/contexts/DropdownContext";
+import DropdownContent from "@/contexts/components/DropdownContext";
 import { useContext } from "react";
 
 export function useDropdown() {

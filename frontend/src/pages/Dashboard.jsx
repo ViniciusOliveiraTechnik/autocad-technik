@@ -1,18 +1,22 @@
-import ActiveFileButton from "../components/ActiveFileButton";
-import ExtractButton from "../components/ExtractButton";
-import TagTable from "../components/TagTable";
-import NotFoundTable from "../components/NotFoundTable";
-import Notification from "../components/UI/Notification/Notification";
-
-import useFileConnection from "../hooks/useFileConnection.jsx";
-import useNotification from "../hooks/useNotification";
-import useExtractTags from "../hooks/useExtractTags.jsx";
-import Sidebar from "@/components/UI/Sidebar/Sidebar";
+import Notification from "@/components/UI/Notification/Notification";
 import SidebarHeader from "@/components/UI/Sidebar/SidebarHeader";
+import Sidebar from "@/components/UI/Sidebar/Sidebar";
 import DropdownSwitch from "@/components/UI/Dropdown/DropdownSwitch";
-import { Building2, Code, Cog, Users, Wallet } from "lucide-react";
 import SidebarTrigger from "@/components/UI/Sidebar/SidebarTrigger";
-import { SidebarProvider } from "@/contexts/SidebarContext";
+
+import ActiveFileButton from "@/components/ActiveFileButton";
+import ExtractButton from "@/components/ExtractButton";
+import NotFoundTable from "@/components/NotFoundTable";
+import Table from "@/components/Table";
+
+import useNotification from "@/hooks/useNotification";
+import useTag from "@/hooks/useTag.jsx";
+import useFile from "@/hooks/useFile.jsx";
+import useTable from "@/hooks/useTable";
+
+import { SidebarProvider } from "@/contexts/components/SidebarContext";
+
+import { Building2, Cog, Users, Wallet } from "lucide-react";
 
 function Dashboard() {
   const {
@@ -21,12 +25,11 @@ function Dashboard() {
     isFileConnectionLoading,
     pingEffect,
     handleFileConnection,
-  } = useFileConnection();
+  } = useFile();
 
   const { visible, textContent, notificationType } = useNotification();
-
-  const { tagResponse, isExtractionRunning, handleExtractTags } =
-    useExtractTags();
+  const { tableData } = useTable();
+  const { isExtractionRunning, handleExtractTags } = useTag();
 
   const menuItems = [
     {
@@ -72,11 +75,7 @@ function Dashboard() {
             isLoadingExtract={isExtractionRunning}
           />
 
-          {tagResponse ? (
-            <TagTable tagResponse={tagResponse} fileID={fileResponse.id} />
-          ) : (
-            <NotFoundTable />
-          )}
+          {tableData ? <Table /> : <NotFoundTable />}
 
           <Notification
             textContent={textContent}

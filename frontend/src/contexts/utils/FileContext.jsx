@@ -1,9 +1,13 @@
-import { useState } from "react";
-import { RecieveFile } from "../api/RecieveFile";
-import useNotification from "./useNotification";
-import useExtractTag from "./useExtractTags";
+import { createContext, useState } from "react";
 
-export default function useFileConnection() {
+import useNotification from "@/hooks/useNotification";
+import useTag from "@/hooks/useTag";
+
+import { RecieveFile } from "@/api/RecieveFile";
+
+export const FileContext = createContext();
+
+export function FileProvider({ children }) {
   const [fileConnectionState, setFileConnectionState] = useState({
     fileName: "Nenhum arquivo selecionado",
     connectionState: "Se conecte à um arquivo",
@@ -14,16 +18,10 @@ export default function useFileConnection() {
 
   const { showNotification } = useNotification();
 
-  const {
-    tagResponse,
-    setTagsResponse,
-    isExtractionRunning,
-    setIsExtractionRunning,
-    handleExtractTags,
-  } = useExtractTag();
+  const { setExtractResponse } = useTag();
 
   const handleFileConnection = async (event) => {
-    setTagsResponse(null);
+    setExtractResponse(null);
     setFileResponse(null);
     setIsFileConnectionLoading(true);
 
@@ -68,11 +66,17 @@ export default function useFileConnection() {
     );
   };
 
-  return {
-    fileResponse,
-    fileConnectionState,
-    isFileConnectionLoading,
-    pingEffect,
-    handleFileConnection,
-  };
+  return (
+    <FileContext.Provider
+      value={{
+        fileResponse,
+        fileConnectionState,
+        isFileConnectionLoading,
+        pingEffect,
+        handleFileConnection,
+      }}
+    >
+      {children}
+    </FileContext.Provider>
+  );
 }
