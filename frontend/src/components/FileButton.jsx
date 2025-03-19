@@ -1,13 +1,17 @@
 import { useRef } from "react";
 import Spinner from "./UI/Spinner/Spinner";
 import StatusIndicatorPing from "./StatusIndicatorPing";
+import useFileStore from "@/store/useFileStore";
 
-export default function ActiveFileButton({
-  pingEffect,
-  onChange,
-  fileConnectionState,
-  isFileConnectionLoading,
-}) {
+export default function FileButton() {
+  const {
+    loadingFile,
+    fileName,
+    connectionState,
+    pingState,
+    fetchFileConnection,
+  } = useFileStore();
+
   const fileInputRef = useRef(null);
 
   const handleRefClick = () => {
@@ -21,31 +25,31 @@ export default function ActiveFileButton({
         onClick={handleRefClick}
         aria-label="Selecionar arquivo"
         aria-describedby="file-status"
-        disabled={isFileConnectionLoading}
+        disabled={loadingFile}
       >
         <div className="text-start">
           <h2 className="text-title-mobile md:text-title-desktop font-semibold text-gray-900">
-            {fileConnectionState.fileName}
+            {fileName}
           </h2>
           <p
             id="file-status"
             className="text-default-mobile md:text-default-desktop font-light text-gray-600"
           >
-            {fileConnectionState.connectionState}
+            {connectionState}
           </p>
         </div>
 
-        {isFileConnectionLoading ? (
+        {loadingFile ? (
           <Spinner extraStyles="text-primary-red" />
         ) : (
-          <StatusIndicatorPing pingEffect={pingEffect} />
+          <StatusIndicatorPing pingEffect={pingState} />
         )}
       </button>
       <input
         type="file"
         className="hidden"
         ref={fileInputRef}
-        onChange={onChange}
+        onChange={(event) => fetchFileConnection(event)}
         accept=".dwg"
       />
     </div>

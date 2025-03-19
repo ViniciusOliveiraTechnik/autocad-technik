@@ -4,32 +4,21 @@ import Sidebar from "@/components/UI/Sidebar/Sidebar";
 import DropdownSwitch from "@/components/UI/Dropdown/DropdownSwitch";
 import SidebarTrigger from "@/components/UI/Sidebar/SidebarTrigger";
 
-import ActiveFileButton from "@/components/ActiveFileButton";
-import ExtractButton from "@/components/ExtractButton";
 import NotFoundTable from "@/components/NotFoundTable";
 import Table from "@/components/Table";
 
 import useNotification from "@/hooks/useNotification";
-import useTag from "@/hooks/useTag.jsx";
-import useFile from "@/hooks/useFile.jsx";
 import useTable from "@/hooks/useTable";
 
 import { SidebarProvider } from "@/contexts/components/SidebarContext";
 
 import { Building2, Cog, Users, Wallet } from "lucide-react";
+import FileButton from "@/components/FileButton";
+import ExtractButton2 from "@/components/ExtractButton";
 
 function Dashboard() {
-  const {
-    fileResponse,
-    fileConnectionState,
-    isFileConnectionLoading,
-    pingEffect,
-    handleFileConnection,
-  } = useFile();
-
   const { visible, textContent, notificationType } = useNotification();
   const { tableData } = useTable();
-  const { isExtractionRunning, handleExtractTags } = useTag();
 
   const menuItems = [
     {
@@ -62,18 +51,8 @@ function Dashboard() {
     <>
       <section className="h-screen flex overflow-hidden">
         <main className="flex-1 flex flex-col gap-3 p-4 bg-gray-100 overflow-y-auto">
-          <ActiveFileButton
-            pingEffect={pingEffect}
-            onChange={handleFileConnection}
-            fileConnectionState={fileConnectionState}
-            isFileConnectionLoading={isFileConnectionLoading}
-          />
-
-          <ExtractButton
-            disabled={!fileResponse || isExtractionRunning}
-            onClick={() => handleExtractTags(fileResponse.id)}
-            isLoadingExtract={isExtractionRunning}
-          />
+          <FileButton />
+          <ExtractButton2 />
 
           {tableData ? <Table /> : <NotFoundTable />}
 
