@@ -4,18 +4,16 @@ import Spinner from "./UI/Spinner/Spinner";
 
 import StatusIndicatorPing from "./StatusIndicatorPing";
 
-import useFileStore from "@/store/useFileStore";
-import useTagStore from "@/store/useTagStore";
+import useFileStore, { useFileActions } from "@/store/useFileStore";
+import { useExtractLoading } from "@/store/useTagStore";
 
 export default function FileButton() {
-  const {
-    loadingFile,
-    fileName,
-    connectionState,
-    pingState,
-    fetchFileConnection,
-  } = useFileStore();
-  const { extractLoading } = useTagStore();
+  // useFileStore
+  const { loadingFile, fileName, connectionState, pingState } = useFileStore();
+  const { fetchFileConnection } = useFileActions();
+
+  // useTagStore
+  const extractLoading = useExtractLoading();
 
   const fileInputRef = useRef(null);
   const handleRefClick = useCallback(() => fileInputRef.current?.click(), []);

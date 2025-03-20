@@ -1,8 +1,8 @@
 import Input from "./TableInput";
-import useTableStore from "@/store/useTableStore";
+import { useTableData } from "@/store/useTableStore";
 
 export default function Table() {
-  const { tableData } = useTableStore();
+  const tableData = useTableData();
   return (
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg max-h-[500px] 2xl:max-h-[600px]">
       <table className="table-primary">

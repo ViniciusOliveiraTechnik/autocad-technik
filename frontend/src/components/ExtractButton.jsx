@@ -2,13 +2,18 @@ import { DiamondPlusIcon } from "lucide-react";
 
 import Spinner from "./UI/Spinner/Spinner";
 
-import useTagStore from "@/store/useTagStore";
-import useFileStore from "@/store/useFileStore";
+import { useExtractLoading, useTagActions } from "@/store/useTagStore";
+import { useFileData } from "@/store/useFileStore";
+
 import { useCallback } from "react";
 
 export default function ExtractButton2() {
-  const { extractLoading, fetchExtractTag } = useTagStore();
-  const { fileData } = useFileStore();
+  // useTagStore
+  const extractLoading = useExtractLoading();
+  const { fetchExtractTag } = useTagActions();
+
+  // useFileStore
+  const fileData = useFileData();
 
   const isDisabled = !fileData || extractLoading;
   const iconContent = extractLoading ? (
@@ -16,7 +21,7 @@ export default function ExtractButton2() {
   ) : (
     <DiamondPlusIcon className="size-4 md:size-5" />
   );
-  
+
   const fileID = fileData?.id;
   const handleClick = useCallback(
     () => fetchExtractTag(fileID),

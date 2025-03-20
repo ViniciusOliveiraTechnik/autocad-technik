@@ -4,14 +4,23 @@ import { SquarePenIcon } from "lucide-react";
 
 import Spinner from "./UI/Spinner/Spinner";
 
-import useTagStore from "@/store/useTagStore";
-import useFileStore from "@/store/useFileStore";
-import useTableStore from "@/store/useTableStore";
+import {
+  useModifyLoading,
+  useTagActions,
+} from "@/store/useTagStore";
+import { useFileData } from "@/store/useFileStore";
+import { useTableData } from "@/store/useTableStore";
 
 export default function ModifyButton() {
-  const { modifyLoading, fetchModifyTag } = useTagStore();
-  const { tableData } = useTableStore();
-  const { fileData } = useFileStore();
+  // useTagStore
+  const modifyLoading = useModifyLoading();
+  const { fetchModifyTag } = useTagActions();
+
+  // useTableStore
+  const tableData = useTableData();
+
+  // useFileStore
+  const fileData = useFileData();
 
   const isDisabled = modifyLoading;
   const iconContent = modifyLoading ? (

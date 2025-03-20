@@ -1,7 +1,7 @@
-import useTableStore from "@/store/useTableStore";
+import { useTableActions } from "@/store/useTableStore";
 
 export default function Input({ type = "text", spanText, id, ...props }) {
-  const { updateTableRow } = useTableStore();
+  const { updateTableRow } = useTableActions();
   return (
     <div className="flex items-center gap-3">
       {spanText && (
@@ -12,9 +12,7 @@ export default function Input({ type = "text", spanText, id, ...props }) {
       <input
         className="w-full h-12 px-4 bg-white border-b text-gray-600 border-gray-400 outline-0 text-[14px] md:text-[16px] focus:bg-sky-50 transition-all"
         type={type}
-        onChange={(event) =>
-          updateTableRow(id, "new_tag", event.target.value)
-        }
+        onChange={(event) => updateTableRow(id, "new_tag", event.target.value)}
         {...props}
       />
     </div>
