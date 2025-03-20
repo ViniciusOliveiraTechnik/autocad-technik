@@ -1,5 +1,7 @@
 import { FileConnection } from "@/api/FileConnection";
 import { create } from "zustand";
+import useNotificationStore from "./useNotificationStore";
+import useTableStore from "./useTableStore";
 
 const useFileStore = create((set) => ({
   fileData: null,
@@ -9,7 +11,13 @@ const useFileStore = create((set) => ({
   pingState: "neutral",
 
   fetchFileConnection: async (event) => {
+    // import global states
+    const { showNotification } = useNotificationStore.getState();
+    const { updateTableData } = useTableStore.getState();
+
     const file = event.target.files[0]; // Get file
+
+    updateTableData([]);
 
     // Verify if file doesn't exist
     if (!file) {
@@ -19,10 +27,11 @@ const useFileStore = create((set) => ({
         connectionState: "Se conecte à um arquivo",
         pingState: "neutral",
       });
+      showNotification("Selecione um arquivo para começar", "error");
       return;
     }
 
-    set({ loadingFile: true }); // Start the loading
+    set({ loadingFile: true, fileData: null }); // Start the loading
 
     try {
       // Try to connect
@@ -35,6 +44,10 @@ const useFileStore = create((set) => ({
         connectionState: "Conectado com sucesso",
         pingState: "success",
       });
+      showNotification(
+        `${response.data.file_name} conectado com sucesso!`,
+        "normal"
+      );
 
       // Error state
     } catch (error) {
@@ -44,7 +57,10 @@ const useFileStore = create((set) => ({
         connectionState: "Falha ao se conectar ao arquivo",
         pingState: "fail",
       });
-      console.error(error);
+      showNotification(
+        error.response?.data?.error || "Erro desconhecido",
+        "error"
+      );
 
       // Loading state goes to false
     } finally {

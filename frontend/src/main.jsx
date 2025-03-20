@@ -10,8 +10,6 @@ import App from "./App";
 
 import Dashboard from "./pages/Dashboard";
 
-import { DashboardProvider } from "./contexts/pages/DashboardContext";
-
 const router = createBrowserRouter([
   {
     path: "/",
@@ -19,11 +17,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: (
-          <DashboardProvider>
-            <Dashboard />
-          </DashboardProvider>
-        ),
+        element: <Dashboard />,
       },
     ],
   },

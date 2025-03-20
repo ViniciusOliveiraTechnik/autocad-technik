@@ -1,9 +1,8 @@
-import Input from "./UI/Input/Input";
-import useTable from "@/hooks/useTable";
+import Input from "./TableInput";
+import useTableStore from "@/store/useTableStore";
 
 export default function Table() {
-  const { tableData, setTableData } = useTable();
-
+  const { tableData } = useTableStore();
   return (
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg max-h-[500px] 2xl:max-h-[600px]">
       <table className="table-primary">
@@ -23,7 +22,11 @@ export default function Table() {
                 {tag.old_tag_regex}
               </th>
               <td>
-                <Input spanText={"TECH"} placeholder={"Insira a nova Tag"} />
+                <Input
+                  spanText="TECH"
+                  placeholder="Insira a nova Tag"
+                  id={tag.id}
+                />
               </td>
             </tr>
           ))}

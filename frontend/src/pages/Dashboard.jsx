@@ -7,18 +7,16 @@ import SidebarTrigger from "@/components/UI/Sidebar/SidebarTrigger";
 import NotFoundTable from "@/components/NotFoundTable";
 import Table from "@/components/Table";
 
-import useNotification from "@/hooks/useNotification";
-import useTable from "@/hooks/useTable";
-
 import { SidebarProvider } from "@/contexts/components/SidebarContext";
 
 import { Building2, Cog, Users, Wallet } from "lucide-react";
 import FileButton from "@/components/FileButton";
 import ExtractButton2 from "@/components/ExtractButton";
+import ModifyButton from "@/components/ModifyButton";
+import useTableStore from "@/store/useTableStore";
 
 function Dashboard() {
-  const { visible, textContent, notificationType } = useNotification();
-  const { tableData } = useTable();
+  const { tableData } = useTableStore();
 
   const menuItems = [
     {
@@ -54,13 +52,17 @@ function Dashboard() {
           <FileButton />
           <ExtractButton2 />
 
-          {tableData ? <Table /> : <NotFoundTable />}
+          {/* Conditional formating with table content and table warning */}
+          {tableData.length ? (
+            <>
+              <Table />
+              <ModifyButton />
+            </>
+          ) : (
+            <NotFoundTable />
+          )}
 
-          <Notification
-            textContent={textContent}
-            hidden={visible}
-            type={notificationType}
-          />
+          <Notification />
         </main>
       </section>
       <section className="h-screen flex overflow-hidden">

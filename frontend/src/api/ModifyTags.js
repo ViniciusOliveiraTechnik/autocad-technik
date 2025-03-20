@@ -17,10 +17,9 @@ export default async function ModifyTags(file_id, tableContent) {
     );
 
     return response.data;
-
+    
   } catch (error) {
-    return error.response
-      ? error.response.data
-      : { error: "Erro desconhecido" };
+    console.error(error);
+    throw error;
   }
 }

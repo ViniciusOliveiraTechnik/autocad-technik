@@ -1,15 +1,18 @@
+import useNotificationStore from "@/store/useNotificationStore";
 import { CircleCheckBig, TriangleAlert } from "lucide-react";
 import { AnimatePresence } from "motion/react";
 import * as motion from "motion/react-client";
 
-export default function Notification({ textContent, hidden, type = "normal" }) {
+export default function Notification() {
+  const { visible, notificationType, textContent } = useNotificationStore();
+
   return (
     <div className="relative">
       <AnimatePresence initial={false}>
-        {hidden ? (
+        {visible ? (
           <motion.div
             className={`notification ${
-              type === "error"
+              notificationType === "error"
                 ? "bg-primary-red/70 text-white"
                 : "bg-white text-sky-600 ring-1 ring-sky-600"
             }`}
@@ -18,7 +21,7 @@ export default function Notification({ textContent, hidden, type = "normal" }) {
             exit={{ opacity: 0, scale: 0 }}
             transition={{ duration: 0.3 }}
           >
-            {type === "error" ? (
+            {notificationType === "error" ? (
               <TriangleAlert className="size-4 md:size-5" />
             ) : (
               <CircleCheckBig className="size-4 md:size-5" />
