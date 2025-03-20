@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const RecieveFile = async (file) => {
+export const FileConnection = async (file) => {
   try {
     const formData = new FormData();
     formData.append("file", file);
@@ -13,8 +13,7 @@ export const RecieveFile = async (file) => {
 
     return response.data;
   } catch (error) {
-    return error.response
-      ? error.response.data
-      : { error: "Erro desconhecido" };
+    console.error(error);
+    throw error;
   }
 };

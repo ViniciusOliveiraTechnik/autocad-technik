@@ -13,12 +13,13 @@ export default async function ExtractTags(file_id) {
         },
       }
     );
-    
-    return response.data; 
-
+    console.log(response.data);
+    return response.data;
   } catch (error) {
-    return error.response
-      ? error.response.data
-      : { error: "Erro desconhecido" };
+    console.log(error);
+    throw error;
   }
 }
+
+//   ? error.response.data
+//   : { error: "Erro desconhecido" };

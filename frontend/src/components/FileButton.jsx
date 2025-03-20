@@ -1,51 +1,60 @@
-import { useRef } from "react";
+import { useCallback, useRef } from "react";
+
 import Spinner from "./UI/Spinner/Spinner";
+
 import StatusIndicatorPing from "./StatusIndicatorPing";
 
-export default function ActiveFileButton({
-  pingEffect,
-  onChange,
-  fileConnectionState,
-  isFileConnectionLoading,
-}) {
-  const fileInputRef = useRef(null);
+import useFileStore from "@/store/useFileStore";
+import useTagStore from "@/store/useTagStore";
 
-  const handleRefClick = () => {
-    fileInputRef.current.click();
-  };
+export default function FileButton() {
+  const {
+    loadingFile,
+    fileName,
+    connectionState,
+    pingState,
+    fetchFileConnection,
+  } = useFileStore();
+  const { extractLoading } = useTagStore();
+
+  const fileInputRef = useRef(null);
+  const handleRefClick = useCallback(() => fileInputRef.current?.click(), []);
+
+  const isDisabled = loadingFile || extractLoading;
+  const fileStatus = connectionState;
 
   return (
     <div>
       <button
-        className="flex items-center justify-between btn-secondary rounded-lg w-full h-18 md:h-20 px-6 "
+        className="flex items-center justify-between btn-secondary rounded-lg w-full h-18 md:h-20 px-6"
         onClick={handleRefClick}
         aria-label="Selecionar arquivo"
         aria-describedby="file-status"
-        disabled={isFileConnectionLoading}
+        disabled={isDisabled}
       >
         <div className="text-start">
           <h2 className="text-title-mobile md:text-title-desktop font-semibold text-gray-900">
-            {fileConnectionState.fileName}
+            {fileName}
           </h2>
           <p
             id="file-status"
             className="text-default-mobile md:text-default-desktop font-light text-gray-600"
           >
-            {fileConnectionState.connectionState}
+            {fileStatus}
           </p>
         </div>
-
-        {isFileConnectionLoading ? (
+        {loadingFile ? (
           <Spinner extraStyles="text-primary-red" />
         ) : (
-          <StatusIndicatorPing pingEffect={pingEffect} />
+          <StatusIndicatorPing pingEffect={pingState} />
         )}
       </button>
+
       <input
         type="file"
         className="hidden"
         ref={fileInputRef}
-        onChange={onChange}
+        onChange={fetchFileConnection}
         accept=".dwg"
       />
     </div>

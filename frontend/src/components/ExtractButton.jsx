@@ -1,27 +1,38 @@
 import { DiamondPlusIcon } from "lucide-react";
+
 import Spinner from "./UI/Spinner/Spinner";
 
-export default function ExtractButton({
-  disabled,
-  isLoadingExtract,
-  ...props
-}) {
+import useTagStore from "@/store/useTagStore";
+import useFileStore from "@/store/useFileStore";
+import { useCallback } from "react";
+
+export default function ExtractButton2() {
+  const { extractLoading, fetchExtractTag } = useTagStore();
+  const { fileData } = useFileStore();
+
+  const isDisabled = !fileData || extractLoading;
+  const iconContent = extractLoading ? (
+    <Spinner extraStyles="text-gray-400" />
+  ) : (
+    <DiamondPlusIcon className="size-4 md:size-5" />
+  );
+  
+  const fileID = fileData?.id;
+  const handleClick = useCallback(
+    () => fetchExtractTag(fileID),
+    [fileID, fetchExtractTag]
+  );
+
   return (
     <div>
       <button
-        className="btn-primary h-8 md:h-10 px-5 flex flex-row items-center justify-center gap-5"
+        className="btn-primary h-8 md:h-10 px-5 flex items-center gap-5"
         aria-label="Extrair TAGs"
-        disabled={disabled}
-        {...props}
+        disabled={isDisabled}
+        onClick={handleClick}
       >
-        <span className="flex items-center justify-center">
-          {isLoadingExtract ? (
-            <Spinner extraStyles="text-gray-400" />
-          ) : (
-            <DiamondPlusIcon className="size-4 md:size-5" />
-          )}
-        </span>
-        <span className="flex items-center justify-start text-button-mobile lg:text-button-desktop">
+        <span>{iconContent}</span>
+        <span className="text-button-mobile lg:text-button-desktop">
           Extrair TAGs
         </span>
       </button>

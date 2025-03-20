@@ -7,9 +7,9 @@ from pyautocad import Autocad
 import pythoncom as pycom
 from comtypes import COMError
 
-
 from .models import *
 from .serializers import *
+
 class AutocadManipulator:
     def __init__(self):
         pass
@@ -23,8 +23,8 @@ class AutocadManipulator:
 
             return acad # Return the acad document
         
-        # except COMError as err:
-        #     raise err
+        except COMError as err:
+            raise err
         except Exception as err:
             raise err
         
@@ -34,10 +34,14 @@ class AutocadManipulator:
         
         text_objects = [obj.TextString for obj in acad.iter_objects(['Text'])]
 
-        # ESSA PARTE AINDA NÃO FOI TOTALMENTE FINALIZADA
         text_dataframe = pd.DataFrame(text_objects, columns=['old_tag'])
-        text_dataframe = text_dataframe[text_dataframe['old_tag'].str.upper().str.contains('TECH')].drop_duplicates(ignore_index=True)
-        text_dataframe['old_tag_regex'] = text_dataframe['old_tag']
+        # text_dataframe = text_dataframe[text_dataframe['old_tag'].str.upper().str.contains('TECH')].drop_duplicates(ignore_index=True)
+        text_dataframe['old_tag_regex'] = (
+            text_dataframe['old_tag']
+            .map(lambda x: re.sub(r'(?:[\\]{1,2}[a-zA-Z]+[\d]+[.][\d]+)|([\\]{1,2}px[\w]+)|([^\w\s\\n-])|([\\]{1,2}[^\\n\\P][\w]+)', '', str(x)))
+            .map(lambda x: re.sub(r'\\P|\n', '<br>', str(x))))
+
+        print(text_dataframe['old_tag_regex'].values)
 
         return text_dataframe.to_json(orient="records")
 
