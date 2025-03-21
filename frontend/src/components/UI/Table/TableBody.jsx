@@ -5,7 +5,7 @@ export default function TableBody() {
   const tableData = useTableData();
 
   return (
-    <tbody className="text-left text-[12px] md:text-[14px]">
+    <tbody className="text-left text-small-sm md:text-small-md">
       {tableData.map((tag) => (
         <tr
           key={tag.id}

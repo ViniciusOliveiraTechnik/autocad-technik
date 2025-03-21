@@ -13,7 +13,7 @@ export default function Notification() {
           <motion.div
             className={`notification ${
               notificationType === "error"
-                ? "bg-primary-red/70 text-white"
+                ? "bg-red-red/70 text-white"
                 : "bg-white text-sky-600 ring-1 ring-sky-600"
             }`}
             initial={{ opacity: 0, scale: 0 }}

@@ -38,7 +38,7 @@ export default function ModifyButton() {
       onClick={handleClick}
     >
       <span>{iconContent}</span>
-      <span className="text-[14px] md:text-[16px]">Modificar</span>
+      <span className="text-default-sm md:text-default-md">Modificar</span>
     </button>
   );
 }

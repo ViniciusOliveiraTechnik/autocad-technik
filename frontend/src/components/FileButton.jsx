@@ -31,18 +31,15 @@ export default function FileButton() {
         disabled={isDisabled}
       >
         <div className="text-start">
-          <h2 className="text-[16px] md:text-[18px] font-semibold text-gray-900">
+          <h2 className="text-title-sm md:text-title-md font-semibold text-gray-900">
             {fileName}
           </h2>
-          <p
-            id="file-status"
-            className="text-[14px] md:text-[16px] font-light text-gray-700"
-          >
+          <p className="text-default-sm md:text-default-md font-light text-gray-700">
             {fileStatus}
           </p>
         </div>
         {loadingFile ? (
-          <Spinner extraStyles="text-primary-red" />
+          <Spinner extraStyles="text-red-500" />
         ) : (
           <StatusIndicatorPing pingEffect={pingState} />
         )}
