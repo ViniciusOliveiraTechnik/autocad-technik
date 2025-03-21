@@ -10,7 +10,16 @@
 
   --color-primary-blue: oklch(0.685 0.169 237.323);
   --color-secondary-blue: oklch(0.609 0.126 221.723);
-  
+
+  --text-title-md: 18px;
+  --text-title-sm: 16px;
+
+  --text-default-md: 16px;
+  --text-default-sm: 14px;
+
+  --text-small-md: 14px;
+  --text-small-sm: 12px;
+
   --text-title-mobile: 16px;
   --text-title-desktop: 18px;
 
