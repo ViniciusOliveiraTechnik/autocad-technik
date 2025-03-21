@@ -24,19 +24,19 @@ export default function FileButton() {
   return (
     <div>
       <button
-        className="flex items-center justify-between btn-secondary rounded-lg w-full h-18 md:h-20 px-6"
+        className="flex items-center justify-between btn-secondary rounded-md w-full h-18 md:h-20 px-5 shadow-sm"
         onClick={handleRefClick}
         aria-label="Selecionar arquivo"
         aria-describedby="file-status"
         disabled={isDisabled}
       >
         <div className="text-start">
-          <h2 className="text-title-mobile md:text-title-desktop font-semibold text-gray-900">
+          <h2 className="text-[16px] md:text-[18px] font-semibold text-gray-900">
             {fileName}
           </h2>
           <p
             id="file-status"
-            className="text-default-mobile md:text-default-desktop font-light text-gray-600"
+            className="text-[14px] md:text-[16px] font-light text-gray-700"
           >
             {fileStatus}
           </p>

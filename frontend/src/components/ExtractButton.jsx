@@ -31,15 +31,13 @@ export default function ExtractButton2() {
   return (
     <div>
       <button
-        className="btn-primary h-8 md:h-10 px-5 flex items-center gap-5"
+        className="btn-primary flex items-center justify-center gap-5 p-2 md:p-3"
         aria-label="Extrair TAGs"
         disabled={isDisabled}
         onClick={handleClick}
       >
         <span>{iconContent}</span>
-        <span className="text-button-mobile lg:text-button-desktop">
-          Extrair TAGs
-        </span>
+        <span className="text-[14px] md:text-[16px]">Extrair TAGs</span>
       </button>
     </div>
   );

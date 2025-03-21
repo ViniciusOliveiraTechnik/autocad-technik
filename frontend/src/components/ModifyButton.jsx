@@ -1,13 +1,10 @@
 import { useCallback } from "react";
 
-import { SquarePenIcon } from "lucide-react";
+import { Pencil } from "lucide-react";
 
 import Spinner from "./UI/Spinner/Spinner";
 
-import {
-  useModifyLoading,
-  useTagActions,
-} from "@/store/useTagStore";
+import { useModifyLoading, useTagActions } from "@/store/useTagStore";
 import { useFileData } from "@/store/useFileStore";
 import { useTableData } from "@/store/useTableStore";
 
@@ -26,24 +23,22 @@ export default function ModifyButton() {
   const iconContent = modifyLoading ? (
     <Spinner extraStyles="text-gray-400" />
   ) : (
-    <SquarePenIcon className="w-5 h-5 md:w-6 md:h-6" />
+    <Pencil className="size-3 md:size-4" />
   );
   const handleClick = useCallback(
     () => fetchModifyTag(fileData.id, tableData),
-    [fetchModifyTag, fileData.id, tableData]
+    [fetchModifyTag, fileData, tableData]
   );
 
   return (
     <button
-      className="w-full btn-secondary flex items-center justify-center gap-5 h-10 md:h-14"
+      className="btn-primary flex gap-4 md:gap-5 items-center justify-center p-3"
       aria-label="Modificar TAGs"
       disabled={isDisabled}
       onClick={handleClick}
     >
       <span>{iconContent}</span>
-      <span className="flex items-center justify-start text-button-mobile lg:text-button-desktop">
-        Modificar TAGs
-      </span>
+      <span className="text-[14px] md:text-[16px]">Modificar</span>
     </button>
   );
 }

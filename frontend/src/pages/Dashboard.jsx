@@ -5,15 +5,15 @@ import DropdownSwitch from "@/components/UI/Dropdown/DropdownSwitch";
 import SidebarTrigger from "@/components/UI/Sidebar/SidebarTrigger";
 
 import NotFoundTable from "@/components/NotFoundTable";
-import Table from "@/components/Table";
 
 import { SidebarProvider } from "@/contexts/components/SidebarContext";
 
 import { Building2, Cog, Users, Wallet } from "lucide-react";
 import FileButton from "@/components/FileButton";
 import ExtractButton2 from "@/components/ExtractButton";
-import ModifyButton from "@/components/ModifyButton";
 import useTableStore from "@/store/useTableStore";
+import TestTable from "@/components/UI/Table/Table";
+import TableCards from "@/components/UI/TableCards/TableCards";
 
 function Dashboard() {
   const { tableData } = useTableStore();
@@ -53,14 +53,7 @@ function Dashboard() {
           <ExtractButton2 />
 
           {/* Conditional formating with table content and table warning */}
-          {tableData.length ? (
-            <>
-              <Table />
-              <ModifyButton />
-            </>
-          ) : (
-            <NotFoundTable />
-          )}
+          {tableData.length ? <TestTable /> : <NotFoundTable />}
 
           <Notification />
         </main>
@@ -75,6 +68,7 @@ function Dashboard() {
 
           <main className="w-full h-screen bg-slate-700 p-4">
             <SidebarTrigger />
+            <TableCards />
           </main>
         </SidebarProvider>
       </section>
