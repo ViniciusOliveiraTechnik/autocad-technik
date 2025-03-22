@@ -5,7 +5,7 @@ export default function TestTable() {
 
   return (
     <div className="flex flex-col bg-white rounded-md p-4 overflow-auto shadow-md">
-      <div className=" max-h-[400px] overflow-y-auto overflow-x-auto custom-scrollbar">
+      <div className="overflow-y-auto overflow-x-auto custom-scrollbar">
         <TableHeader />
         <TableContent />
       </div>
