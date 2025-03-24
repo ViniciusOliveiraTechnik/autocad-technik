@@ -1,38 +1,44 @@
 import useNotificationStore from "@/store/useNotificationStore";
-import { CircleCheckBig, TriangleAlert } from "lucide-react";
-import { AnimatePresence } from "motion/react";
-import * as motion from "motion/react-client";
+import { CheckCheck, TriangleAlert } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 
 export default function Notification() {
+  // useNotificationStore
   const { visible, notificationType, textContent } = useNotificationStore();
 
-  return (
-    <div className="relative">
-      <AnimatePresence initial={false}>
-        {visible ? (
-          <motion.div
-            className={`notification ${
-              notificationType === "error"
-                ? "bg-red-red/70 text-white"
-                : "bg-white text-sky-600 ring-1 ring-sky-600"
-            }`}
-            initial={{ opacity: 0, scale: 0 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            {notificationType === "error" ? (
-              <TriangleAlert className="size-4 md:size-5" />
-            ) : (
-              <CircleCheckBig className="size-4 md:size-5" />
-            )}
+  const notifcationTitle = notificationType === "normal" ? "Sucesso" : "Erro";
+  const iconContent =
+    notificationType === "error" ? (
+      <TriangleAlert className="size-4 md:size-5" />
+    ) : (
+      <CheckCheck className="size-4 md:size-5" />
+    );
 
-            <span className="text-default-sm md:text-default-md">
-              {textContent}
-            </span>
-          </motion.div>
-        ) : null}
-      </AnimatePresence>
-    </div>
+  return (
+    <AnimatePresence>
+      {visible ? (
+        <motion.div
+          initial={{ opacity: 0, scale: 0 }}
+          animate={{ opacity: 1, scale: 1.1 }}
+          exit={{ opacity: 0, scale: 0 }}
+          transition={{ duration: 0.3, ease: "easeInOut" }}
+          className={`fixed bottom-8 left-1/2 -translate-x-1/2 flex items-center justify-center rounded-md text-white ${
+            notificationType === "normal" ? "bg-sky-500/80" : "bg-red-500/80 "
+          }`}
+        >
+          <div className="flex flex-col justify-center px-4 py-2">
+            <header className="flex items-center justify-start gap-3">
+              {iconContent}
+              <h2 className="text-default-sm md:text-default-md font-semibold">
+                {notifcationTitle}
+              </h2>
+            </header>
+            <main>
+              <p className="text-small-sm md:text-small-md">{textContent}</p>
+            </main>
+          </div>
+        </motion.div>
+      ) : null}
+    </AnimatePresence>
   );
 }
