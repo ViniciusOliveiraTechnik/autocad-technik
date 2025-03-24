@@ -3,20 +3,14 @@
 @plugin "tailwindcss-animate";
 
 @theme {
-  --color-primary-red: oklch(0.637 0.237 25.331);
-  --color-secondary-red: oklch(0.577 0.245 27.325);
+  --text-title-md: 18px;
+  --text-title-sm: 16px;
 
-  --color-primary-blue: oklch(0.685 0.169 237.323);
-  --color-secondary-blue: oklch(0.609 0.126 221.723);
+  --text-default-md: 16px;
+  --text-default-sm: 14px;
 
-  --text-title-mobile: 16px;
-  --text-title-desktop: 18px;
-
-  --text-button-mobile: 14px;
-  --text-button-desktop: 16px;
-
-  --text-default-mobile: 14px;
-  --text-default-desktop: 16px;
+  --text-small-md: 14px;
+  --text-small-sm: 12px;
 }
 
 @layer utilities {
@@ -42,10 +36,10 @@
 
 @layer components {
   .btn-primary {
-    @apply bg-primary-red text-white text-button-mobile md:text-button-desktop cursor-pointer rounded-lg transition-all duration-300 ease-in-out;
+    @apply bg-red-500 text-white text-default-sm md:text-default-md cursor-pointer rounded-lg transition-all duration-300 ease-in-out;
 
     &:hover {
-      @apply bg-secondary-red;
+      @apply bg-red-600;
     }
 
     &:disabled {
@@ -54,10 +48,10 @@
   }
 
   .btn-secondary {
-    @apply bg-white text-primary-red text-button-mobile md:text-button-desktop cursor-pointer rounded-lg transition-all duration-300 ease-in-out;
+    @apply bg-white text-red-500 text-default-sm md:text-default-md cursor-pointer rounded-lg transition-all duration-300 ease-in-out;
 
     &:hover {
-      @apply ring-2 ring-offset-0 ring-primary-red/50;
+      @apply ring-2 ring-offset-0 ring-red-500/50;
     }
 
     &:active {

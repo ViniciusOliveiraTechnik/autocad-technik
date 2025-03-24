@@ -37,7 +37,7 @@ export default function ExtractButton2() {
         onClick={handleClick}
       >
         <span>{iconContent}</span>
-        <span className="text-[14px] md:text-[16px]">Extrair TAGs</span>
+        <span>Extrair TAGs</span>
       </button>
     </div>
   );

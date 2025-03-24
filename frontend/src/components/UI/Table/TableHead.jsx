@@ -4,8 +4,8 @@ export default function TableHead() {
       className="
         sticky top-0 
         h-14 md:h-16  
-        text-left text-[12px] md:text-[14px]  
-        bg-white/90 backdrop-blur-[5px]
+        text-left text-small-sm md:text-small-md
+        bg-white/70 backdrop-blur-[5px]
       "
     >
       <tr className="border-b border-gray-300 text-gray-900">

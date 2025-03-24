@@ -12,12 +12,11 @@ export default function TableBody() {
   );
 
   return (
-    <tbody className="text-left text- md:text-[14px]">
-      {filteredData.length ? (
-        filteredData.map((tag) => (
-          <tr
-            key={tag.id}
-            className="
+    <tbody className="text-left text-small-sm md:text-small-md">
+      {tableData.map((tag) => (
+        <tr
+          key={tag.id}
+          className="
             h-14 md:h-16 
             border-b border-gray-200
           "

@@ -10,13 +10,13 @@ export default function TableInput({ tag, text = "text", id, ...props }) {
   );
 
   return (
-    <div className="flex items-center justify-center">
+    <div className="flex items-center justify-center text-small-sm md:text-small-md">
       <span
         className="
           flex items-center justify-center text-center  
           px-3 h-10 rounded-l-md  
           border border-gray-400 border-r-0  
-          text-gray-400 text-[12px] md:text-[14px]
+          text-gray-400 
         "
       >
         {text}
@@ -26,6 +26,7 @@ export default function TableInput({ tag, text = "text", id, ...props }) {
         className="
           w-full h-10 px-3  
           border border-gray-400 rounded-r-md outline-none  
+
           placeholder:text-gray-400  
           focus:ring-1 ring-sky-400  
           transition-all duration-300
