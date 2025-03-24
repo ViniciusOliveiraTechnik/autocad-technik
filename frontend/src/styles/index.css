@@ -2,15 +2,13 @@
 
 @plugin "tailwindcss-animate";
 
-@custom-variant dark (&:is(.dark *));
-
 @theme {
   --color-primary-red: oklch(0.637 0.237 25.331);
   --color-secondary-red: oklch(0.577 0.245 27.325);
 
   --color-primary-blue: oklch(0.685 0.169 237.323);
   --color-secondary-blue: oklch(0.609 0.126 221.723);
-  
+
   --text-title-mobile: 16px;
   --text-title-desktop: 18px;
 

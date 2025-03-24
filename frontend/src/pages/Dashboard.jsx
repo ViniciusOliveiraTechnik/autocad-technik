@@ -14,6 +14,7 @@ import ExtractButton2 from "@/components/ExtractButton";
 import useTableStore from "@/store/useTableStore";
 import TestTable from "@/components/UI/Table/Table";
 import TableCards from "@/components/UI/TableCards/TableCards";
+import SearchInput from "@/components/UI/Input/SearchInput";
 
 function Dashboard() {
   const { tableData } = useTableStore();
@@ -68,6 +69,7 @@ function Dashboard() {
 
           <main className="w-full h-screen bg-slate-700 p-4">
             <SidebarTrigger />
+            <SearchInput placeholder="Pesquisar" />
             <TableCards />
           </main>
         </SidebarProvider>

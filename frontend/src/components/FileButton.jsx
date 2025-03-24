@@ -18,6 +18,11 @@ export default function FileButton() {
   const fileInputRef = useRef(null);
   const handleRefClick = useCallback(() => fileInputRef.current?.click(), []);
 
+  const iconContent = loadingFile ? (
+    <Spinner extraStyles="text-primary-red" />
+  ) : (
+    <StatusIndicatorPing pingEffect={pingState} />
+  );
   const isDisabled = loadingFile || extractLoading;
   const fileStatus = connectionState;
 
@@ -41,11 +46,7 @@ export default function FileButton() {
             {fileStatus}
           </p>
         </div>
-        {loadingFile ? (
-          <Spinner extraStyles="text-primary-red" />
-        ) : (
-          <StatusIndicatorPing pingEffect={pingState} />
-        )}
+        {iconContent}
       </button>
 
       <input
