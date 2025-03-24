@@ -27,7 +27,7 @@ export default function Notification() {
               <CircleCheckBig className="size-4 md:size-5" />
             )}
 
-            <span className="text-default-mobile md:text-default-desktop">
+            <span className="text-default-sm md:text-default-md">
               {textContent}
             </span>
           </motion.div>
