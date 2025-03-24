@@ -2,8 +2,10 @@ import { useTableActions } from "@/store/useTableStore";
 import { useCallback } from "react";
 
 export default function TableInput({ tag, text = "text", id, ...props }) {
+  // useTableStore
   const { updateTableRow } = useTableActions();
 
+  // Components Methods
   const handleChange = useCallback(
     (event) => updateTableRow(id, "new_tag", event.target.value),
     [updateTableRow, id]

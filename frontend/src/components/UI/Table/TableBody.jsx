@@ -7,7 +7,7 @@ export default function TableBody() {
   const tableData = useTableData();
   const tableSearch = useTableSearch();
 
-  // Filtrando os dados de acordo com a pesquisa
+  // Component Methods
   const filteredData = tableData.filter((row) =>
     row.old_tag_regex.toLowerCase().includes(tableSearch.toLowerCase())
   );

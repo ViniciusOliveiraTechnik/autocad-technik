@@ -6,6 +6,7 @@ import useNotificationStore from "./useNotificationStore";
 import useTableStore from "./useTableStore";
 
 const useFileStore = create((set) => ({
+  fileInputRef: null,
   fileData: null,
   loadingFile: false,
   fileName: "Nenhum arquivo selecionado",
@@ -69,9 +70,13 @@ const useFileStore = create((set) => ({
         set({ loadingFile: false });
       }
     },
+
+    updateFileInputRef: (fileInputRef) => set({ fileInputRef }),
   },
 }));
 
+export const useFileInputRef = () =>
+  useFileStore((state) => state.fileInputRef);
 export const useFileData = () => useFileStore((state) => state.fileData);
 export const useLoadingFile = () => useFileStore((state) => state.loadingFile);
 export const useConnectionState = () =>

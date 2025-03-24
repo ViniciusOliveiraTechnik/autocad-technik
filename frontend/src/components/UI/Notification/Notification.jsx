@@ -6,12 +6,13 @@ export default function Notification() {
   // useNotificationStore
   const { visible, notificationType, textContent } = useNotificationStore();
 
+  // Component Attrs
   const notifcationTitle = notificationType === "normal" ? "Sucesso" : "Erro";
   const iconContent =
     notificationType === "error" ? (
-      <TriangleAlert className="size-4 md:size-5" />
+      <TriangleAlert className="size-3 md:size-4" />
     ) : (
-      <CheckCheck className="size-4 md:size-5" />
+      <CheckCheck className="size-3 md:size-4" />
     );
 
   return (
@@ -29,7 +30,7 @@ export default function Notification() {
           <div className="flex flex-col justify-center px-4 py-2">
             <header className="flex items-center justify-start gap-3">
               {iconContent}
-              <h2 className="text-default-sm md:text-default-md font-semibold">
+              <h2 className="text-small-sm md:text-small-md font-semibold">
                 {notifcationTitle}
               </h2>
             </header>

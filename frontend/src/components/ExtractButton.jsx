@@ -15,14 +15,16 @@ export default function ExtractButton2() {
   // useFileStore
   const fileData = useFileData();
 
+  // Component Attrs
   const isDisabled = !fileData || extractLoading;
   const iconContent = extractLoading ? (
     <Spinner extraStyles="text-gray-400" />
   ) : (
     <DiamondPlusIcon className="size-4 md:size-5" />
   );
-
   const fileID = fileData?.id;
+
+  // Component Methods
   const handleClick = useCallback(
     () => fetchExtractTag(fileID),
     [fileID, fetchExtractTag]
@@ -31,7 +33,7 @@ export default function ExtractButton2() {
   return (
     <div>
       <button
-        className="btn-primary flex items-center justify-center gap-5 p-2 md:p-3"
+        className="btn-primary flex items-center justify-center gap-5 p-2 md:p-3 shadow-sm"
         aria-label="Extrair TAGs"
         disabled={isDisabled}
         onClick={handleClick}

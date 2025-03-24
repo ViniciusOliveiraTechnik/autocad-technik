@@ -1,4 +1,4 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 import Spinner from "./UI/Spinner/Spinner";
 
@@ -9,15 +9,15 @@ import { useExtractLoading } from "@/store/useTagStore";
 
 export default function FileButton() {
   // useFileStore
-  const { loadingFile, fileName, connectionState, pingState } = useFileStore();
-  const { fetchFileConnection } = useFileActions();
+  const { loadingFile, fileName, connectionState, pingState, fileInputRef } =
+    useFileStore();
+  const { fetchFileConnection, updateFileInputRef } = useFileActions();
 
   // useTagStore
   const extractLoading = useExtractLoading();
 
-  const fileInputRef = useRef(null);
-  const handleRefClick = useCallback(() => fileInputRef.current?.click(), []);
-
+  // Component Attrs
+  const ref = useRef(null);
   const iconContent = loadingFile ? (
     <Spinner extraStyles="text-primary-red" />
   ) : (
@@ -25,6 +25,12 @@ export default function FileButton() {
   );
   const isDisabled = loadingFile || extractLoading;
   const fileStatus = connectionState;
+
+  // Component Methods
+  const handleRefClick = useCallback(() => ref.current?.click(), [ref]);
+  useEffect(() => {
+    updateFileInputRef(ref);
+  }, []);
 
   return (
     <div>
