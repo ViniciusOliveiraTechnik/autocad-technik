@@ -35,7 +35,7 @@ class AutocadManipulator:
         text_objects = [obj.TextString for obj in acad.iter_objects(['Text'])]
 
         text_dataframe = pd.DataFrame(text_objects, columns=['old_tag'])
-        # text_dataframe = text_dataframe[text_dataframe['old_tag'].str.upper().str.contains('TECH')].drop_duplicates(ignore_index=True)
+        text_dataframe = text_dataframe[text_dataframe['old_tag'].str.upper().str.contains('TECH')].drop_duplicates(ignore_index=True)
         text_dataframe['old_tag_regex'] = (
             text_dataframe['old_tag']
             .map(lambda x: re.sub(r'(?:[\\]{1,2}[a-zA-Z]+[\d]+[.][\d]+)|([\\]{1,2}px[\w]+)|([^\w\s\\n-])|([\\]{1,2}[^\\n\\P][\w]+)', '', str(x)))
@@ -50,11 +50,31 @@ class AutocadManipulator:
             raise RuntimeError('O AutoCAD não está conectado corretamente, se conecte primeiro!')
         
         for text_object in acad.iter_objects(['Text']):
-            try:
+            # try:
+                # Try to get Tag
+                print(text_object.TextString)
                 tag = Tag.objects.get(old_tag=str(text_object.TextString))
                 
-                if tag.new_tag:
-                    text_object.TextString = str(text_object.TextString).replace(tag.old_tag, tag.new_tag)
+                # Setting Tag elements
+                old_tag = tag.old_tag
+                old_tag_regex = tag.old_tag_regex
+                new_tag = tag.new_tag
 
-            except Tag.DoesNotExist:
-                continue
+                # Removing TECH temporarily
+                old_tag, old_tag_regex, new_tag = [re.sub(r'TECH([-]|<[^\W]+>|[\s]+)?', '', tag_attr) for tag_attr in [old_tag, old_tag_regex, new_tag]]
+
+                # Getting old_tag_regex and new_tag arrays to indentify tag content
+                old_tag_regex_array, new_tag_array = [re.split(r'\s+|<[^\W]+>|[-]', tag_attr) for tag_attr in [old_tag_regex, new_tag]] 
+                
+                for index, tag_content in enumerate(old_tag_regex_array):
+
+                    # Try to replace the content's
+                    try:
+                        text_object.TextString = text_object.TextString.replace(tag_content, new_tag_array[index])
+
+                    # Error case to skip
+                    except IndexError:
+                        continue
+
+            # except Tag.DoesNotExist:
+            #     continue

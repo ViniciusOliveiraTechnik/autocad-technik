@@ -90,42 +90,56 @@ def extract_tags(request, file_id):
 @api_view(['POST'])
 @permission_classes((permissions.AllowAny,))
 def modify_tags(request, file_id): 
+
+    # Get the data source of user request
     data = request.data.get('data')
 
+    # Data exists?
     if not data:
         return Response({'error': 'Nenhum dado recebido para modificação'}, status=status.HTTP_400_BAD_REQUEST)
 
+    # Try to lookup the file id
     try:
         file = File.objects.get(id=file_id)
     except File.DoesNotExist:
         return Response({'error': 'Arquivo não encontrado ou não existente'}, status=status.HTTP_404_NOT_FOUND)
 
     try:
+        # Create a instance of the AutoCADManipulator 
         manipulator = AutocadManipulator()
-        acad = manipulator.connect_to_autocad(file.file_path)
-
+        acad = manipulator.connect_to_autocad(file.file_path) # Connect to current file
+        
+        # Get all tags IDs
         tag_ids = [UUID(tag['id']) for tag in data]
+
+        # Get all tag objects
         tag_map = Tag.objects.in_bulk(tag_ids)
 
-        updated_tags = []
+        updated_tags = [] # To save the new data
         
+        # Lookup to get object
         for tag in data:
             tag_instance = tag_map.get(UUID(tag['id']))
             if not tag_instance:
                 return Response({'error': f'A Tag "{tag["old_tag_regex"]}" não foi encontrada'}, status=status.HTTP_404_NOT_FOUND)
 
+            # Saving in array
             tag_instance.new_tag = tag['new_tag']
             updated_tags.append(tag_instance)
-
+        
+        # Updating all data in one query
         Tag.objects.bulk_update(updated_tags, ['new_tag'])
-
+        
+        # Creating the serialization
         tag_serializer = TagSerializer(updated_tags, many=True)
+        
+        # Calling the modify function
         manipulator.modify_tags(acad)
-
+        
         return Response(tag_serializer.data, status=status.HTTP_200_OK)
 
     except File.DoesNotExist:
         return Response({'error': 'Arquivo do AutoCAD não encontrado'}, status=status.HTTP_404_NOT_FOUND)
 
-    except Exception as e:
-        return Response({'error': f'Erro ao modificar dados do AutoCAD: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    # except Exception as e:
+    #     return Response({'error': f'Erro ao modificar dados do AutoCAD: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
