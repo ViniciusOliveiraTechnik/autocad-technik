@@ -30,7 +30,14 @@ const useTagStore = create((set) => ({
         // Try to get
         const response = await ExtractTags(fileID); // Get tags
         updateTableData(response);
-        showNotification(`${response.length} tags extraídas`, "normal");
+
+        const hasData = response.length; // Verify if has data in table
+        const dataNotificationText = hasData
+          ? `${hasData} tags extraídas`
+          : "Nenhuma tag encontrada";
+        const dataNotificationType = hasData ? "normal" : "error";
+
+        showNotification(dataNotificationText, dataNotificationType);
         return;
 
         // Error

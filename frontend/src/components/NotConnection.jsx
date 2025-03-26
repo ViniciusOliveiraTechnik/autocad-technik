@@ -2,7 +2,7 @@ import { useFileInputRef } from "@/store/useFileStore";
 import { Database } from "lucide-react";
 import { useCallback } from "react";
 
-export default function NotFoundTable() {
+export default function NotConnection() {
   // useFileStore
   const fileInputRef = useFileInputRef();
 
@@ -15,10 +15,10 @@ export default function NotFoundTable() {
   );
 
   return (
-    <div className="h-full w-full flex gap-3 items-center justify-center bg-transparent rounded-lg text-gray-400 text-center">
+    <div className="flex items-center justify-center gap-3">
       <Database
         className="size-8 md:size-9"
-        aria-label="Ícone de tabela vazia"
+        aria-label="Ícone de banco de dados"
       />
       <div className="flex flex-col items-start justify-center">
         <h2 className="text-default-sm md:text-default-md font-semibold">

@@ -4,7 +4,7 @@ import Sidebar from "@/components/UI/Sidebar/Sidebar";
 import DropdownSwitch from "@/components/UI/Dropdown/DropdownSwitch";
 import SidebarTrigger from "@/components/UI/Sidebar/SidebarTrigger";
 
-import NotFoundTable from "@/components/NotFoundTable";
+import NotConnection from "@/components/NotConnection";
 
 import { SidebarProvider } from "@/contexts/components/SidebarContext";
 
@@ -13,6 +13,7 @@ import FileButton from "@/components/FileButton";
 import ExtractButton2 from "@/components/ExtractButton";
 import useTableStore from "@/store/useTableStore";
 import TestTable from "@/components/UI/Table/Table";
+import DataAlertContent from "@/components/DataAlertContent";
 
 function Dashboard() {
   const { tableData } = useTableStore();
@@ -51,8 +52,7 @@ function Dashboard() {
           <FileButton />
           <ExtractButton2 />
 
-          {/* Conditional formating with table content and table warning */}
-          {tableData.length ? <TestTable /> : <NotFoundTable />}
+          {tableData.length ? <TestTable /> : <DataAlertContent />}
 
           <Notification />
         </main>
