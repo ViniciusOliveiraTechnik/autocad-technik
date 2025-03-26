@@ -41,8 +41,6 @@ class AutocadManipulator:
             .map(lambda x: re.sub(r'(?:[\\]{1,2}[a-zA-Z]+[\d]+[.][\d]+)|([\\]{1,2}px[\w]+)|([^\w\s\\n-])|([\\]{1,2}[^\\n\\P][\w]+)', '', str(x)))
             .map(lambda x: re.sub(r'\\P|\n', '<br>', str(x))))
 
-        print(text_dataframe['old_tag_regex'].values)
-
         return text_dataframe.to_json(orient="records")
 
     def modify_tags(self, acad):
@@ -50,31 +48,29 @@ class AutocadManipulator:
             raise RuntimeError('O AutoCAD não está conectado corretamente, se conecte primeiro!')
         
         for text_object in acad.iter_objects(['Text']):
-            # try:
+            try:
                 # Try to get Tag
-                print(text_object.TextString)
                 tag = Tag.objects.get(old_tag=str(text_object.TextString))
                 
+                current_text = str(text_object.TextString)
+
                 # Setting Tag elements
-                old_tag = tag.old_tag
                 old_tag_regex = tag.old_tag_regex
                 new_tag = tag.new_tag
-
-                # Removing TECH temporarily
-                old_tag, old_tag_regex, new_tag = [re.sub(r'TECH([-]|<[^\W]+>|[\s]+)?', '', tag_attr) for tag_attr in [old_tag, old_tag_regex, new_tag]]
-
-                # Getting old_tag_regex and new_tag arrays to indentify tag content
-                old_tag_regex_array, new_tag_array = [re.split(r'\s+|<[^\W]+>|[-]', tag_attr) for tag_attr in [old_tag_regex, new_tag]] 
                 
-                for index, tag_content in enumerate(old_tag_regex_array):
+                # Separating the string in array
+                old_tag_regex_array, new_tag_array = [re.split(r'\s+|<[^\W]+>|[-]', tag_attr) for tag_attr in [old_tag_regex, new_tag]]
+                
+                # Adding the TECH prefix
+                new_tag_array.insert(0, 'TECH')
 
-                    # Try to replace the content's
-                    try:
-                        text_object.TextString = text_object.TextString.replace(tag_content, new_tag_array[index])
+                # Loop for each item in the arrays
+                for old_tag_content, new_tag_content in zip(old_tag_regex_array, new_tag_array):
+                    index = current_text.rfind(old_tag_content)
+                    current_text = current_text[:index] + current_text[index:].replace(old_tag_content, new_tag_content, 1)
 
-                    # Error case to skip
-                    except IndexError:
-                        continue
+                # Save the mew text obj
+                text_object.TextString = current_text
 
-            # except Tag.DoesNotExist:
-            #     continue
+            except Tag.DoesNotExist:
+                continue

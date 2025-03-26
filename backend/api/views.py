@@ -141,5 +141,5 @@ def modify_tags(request, file_id):
     except File.DoesNotExist:
         return Response({'error': 'Arquivo do AutoCAD não encontrado'}, status=status.HTTP_404_NOT_FOUND)
 
-    # except Exception as e:
-    #     return Response({'error': f'Erro ao modificar dados do AutoCAD: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    except Exception as e:
+        return Response({'error': f'Erro ao modificar dados do AutoCAD: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
